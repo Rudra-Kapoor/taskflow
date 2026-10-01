@@ -136,6 +136,7 @@ async function reconcileTeamRooms(socket) {
 
 export function initSocket(httpServer) {
   const io = new Server(httpServer, {
+    path: env.socketPath,
     cors: { origin: env.clientOrigins, credentials: true },
     pingInterval: PING_INTERVAL_MS,
     pingTimeout: PING_TIMEOUT_MS,

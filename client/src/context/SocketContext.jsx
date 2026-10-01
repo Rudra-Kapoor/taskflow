@@ -8,6 +8,17 @@ import { registerRealtimeHandlers } from '@/realtime/handlers';
 import { useAuth } from './AuthContext';
 
 /** Socket.IO origin: `VITE_SOCKET_URL`, else the API's (this page's when the API is relative). */
+/**
+ * Optional build-time overrides, e.g. on serverless hosting (Vercel) where functions can't hold
+ * WebSocket connections: VITE_SOCKET_PATH=/api/socket.io and VITE_SOCKET_TRANSPORTS=polling.
+ */
+const SOCKET_OPTIONS = {
+  ...(import.meta.env.VITE_SOCKET_PATH && { path: import.meta.env.VITE_SOCKET_PATH }),
+  ...(import.meta.env.VITE_SOCKET_TRANSPORTS && {
+    transports: import.meta.env.VITE_SOCKET_TRANSPORTS.split(',').map((item) => item.trim()),
+  }),
+};
+
 const SOCKET_URL =
   import.meta.env.VITE_SOCKET_URL || new URL(API_BASE_URL, window.location.origin).origin;
 
@@ -113,6 +124,7 @@ export function SocketProvider({ children }) {
         send({ token: handshakeToken });
       },
       reconnectionDelayMax: 5000,
+      ...SOCKET_OPTIONS,
     });
     const joinedRooms = joinedRef.current;
     socketRef.current = instance;

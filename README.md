@@ -17,8 +17,8 @@ drag & drop, live collaboration, activity logs and notifications.
 
 | | |
 | --- | --- |
-| **App** | _add your deployed URL here_ (e.g. `https://taskflow.onrender.com`) |
-| **Repository** | _add your GitHub URL here_ |
+| **App** | **https://taskflow-one-weld.vercel.app** |
+| **Repository** | https://github.com/Rudra-Kapoor/taskflow |
 
 ### Demo credentials
 
@@ -240,7 +240,17 @@ on a different origin than the React app. Leave empty to use the same origin / t
 
 ## Deployment
 
-### Render + MongoDB Atlas (recommended, free tier)
+### Vercel + MongoDB Atlas (live demo)
+
+The live demo runs on Vercel ([`vercel.json`](vercel.json)): the React build is served as static files and
+the whole Express API + Socket.IO server runs as one serverless function (`api/[...path].js` ->
+`server/src/serverless.js`). Serverless functions cannot hold WebSocket connections, so on Vercel Socket.IO
+uses HTTP long-polling under `/api/socket.io` (`SOCKET_PATH`, `VITE_SOCKET_PATH`,
+`VITE_SOCKET_TRANSPORTS=polling`). The database is MongoDB Atlas provisioned through the Vercel Marketplace
+(it injects `MONGODB_URI`). For full WebSocket transport and the due-date reminder job, use a long-running
+host such as Render (below) or Docker.
+
+### Render + MongoDB Atlas (long-running server, free tier)
 
 1. **MongoDB Atlas:** create a free M0 cluster → _Database Access_: add a user → _Network Access_: allow
    `0.0.0.0/0` → _Connect → Drivers_: copy the connection string and add a database name, e.g.

@@ -13,7 +13,8 @@ const envSchema = z
   .object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
     PORT: z.coerce.number().int().positive().default(5000),
-    MONGO_URI: z.string().trim().optional().default(''),
+    // MONGODB_URI is the name Vercel's MongoDB Atlas integration uses.
+    MONGO_URI: z.string().trim().optional().default(process.env.MONGODB_URI || ''),
     JWT_SECRET: z.preprocess(
       blankAsUnset,
       z.string().min(16, 'JWT_SECRET must be at least 16 characters').optional(),
@@ -22,6 +23,8 @@ const envSchema = z
     // Render exposes the public service URL, which is the right default when the API serves the SPA.
     CLIENT_URL: z.string().default(process.env.RENDER_EXTERNAL_URL || 'http://localhost:5173'),
     SEED_ON_EMPTY_DB: booleanString,
+    // Socket.IO endpoint; on Vercel it lives under /api so the API function receives it.
+    SOCKET_PATH: z.string().startsWith('/').default('/socket.io'),
     // Number of reverse proxies in front of the server (e.g. 1 on Render). X-Forwarded-For is
     // only trusted that many hops deep; trusting it without a proxy would let any client spoof
     // its IP and dodge the per-IP rate limits.
@@ -71,5 +74,6 @@ export const env = Object.freeze({
     .map((origin) => origin.trim().replace(/\/$/, ''))
     .filter(Boolean),
   seedOnEmptyDb: raw.SEED_ON_EMPTY_DB,
+  socketPath: raw.SOCKET_PATH,
   trustProxy: raw.TRUST_PROXY,
 });
