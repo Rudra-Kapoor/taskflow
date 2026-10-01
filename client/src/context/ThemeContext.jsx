@@ -5,18 +5,20 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 export const THEME_STORAGE_KEY = 'taskflow-theme';
 
 const PREFERENCES = ['light', 'dark', 'system'];
+/** First visit (nothing saved yet): the app opens in dark mode. */
+const DEFAULT_PREFERENCE = 'dark';
 const THEME_COLORS = { light: '#F5F3EE', dark: '#0F0F0E' };
 const DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)';
 
 const ThemeContext = createContext(null);
 
-const toPreference = (value) => (PREFERENCES.includes(value) ? value : 'system');
+const toPreference = (value) => (PREFERENCES.includes(value) ? value : DEFAULT_PREFERENCE);
 
 function readStoredPreference() {
   try {
     return toPreference(window.localStorage.getItem(THEME_STORAGE_KEY));
   } catch {
-    return 'system';
+    return DEFAULT_PREFERENCE;
   }
 }
 
@@ -33,8 +35,8 @@ function applyTheme(theme) {
 }
 
 /**
- * Colour theme. The user's `preference` is light, dark or system (follows the OS live, the
- * default); `theme` is the resolved light / dark value. Saved per device and synced across tabs.
+ * Colour theme. The user's `preference` is light, dark (the default) or system (follows the OS
+ * live); `theme` is the resolved light / dark value. Saved per device and synced across tabs.
  */
 export function ThemeProvider({ children }) {
   const [preference, setPreference] = useState(readStoredPreference);
