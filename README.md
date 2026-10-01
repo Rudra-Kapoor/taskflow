@@ -353,3 +353,7 @@ All endpoints live under `/api` and return `{ success, data, meta? }` or
 
 Email invitations for users without an account, file attachments, sub-tasks, @mentions, sprints/boards per
 team, and end-to-end tests in CI.
+
+---
+
+Built by **Rudra Kapoor** ([@Rudra-Kapoor](https://github.com/Rudra-Kapoor)).
