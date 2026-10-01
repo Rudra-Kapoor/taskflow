@@ -89,6 +89,6 @@ export function mergeRefs(...refs) {
 /** True when the user is on macOS / iOS (used for ⌘ vs Ctrl shortcut hints). */
 export function isApplePlatform() {
   if (typeof navigator === 'undefined') return false;
-  const platform = navigator.userAgentData?.platform || navigator.platform || navigator.userAgent;
-  return /mac|iphone|ipad|ipod/i.test(platform);
+  // iPadOS reports a Mac platform, so this covers every Apple device.
+  return /mac|iphone|ipad|ipod/i.test(navigator.platform || '');
 }

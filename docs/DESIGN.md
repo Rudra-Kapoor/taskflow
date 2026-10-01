@@ -1,6 +1,6 @@
-# TaskFlow visual design — "Studio" redesign (branch `ui-redesign`)
+# TaskFlow visual design
 
-Goal: the product must look crafted by a design team, not generated. Editorial, calm, confident.
+Goal: a product that feels crafted by a design team: editorial, calm, confident.
 Think Linear's restraint + a print/editorial sensibility (paper, ink, one vermilion accent).
 
 ## Principles
@@ -10,7 +10,7 @@ Think Linear's restraint + a print/editorial sensibility (paper, ink, one vermil
    selection, the logo mark. Primary buttons are **ink** (near-black; off-white in dark mode).
 4. **Tighter radii** (6-10 px), real alignment grids, generous but deliberate whitespace.
 5. **Numbers and keys in mono** (tabular figures). Meta text small, muted, never tiny (>= 11 px).
-6. **No AI tells:** no purple/indigo gradients, no gradient text, no glow/blur blobs, no glassmorphism,
+6. **No template clichés:** no purple/indigo gradients, no gradient text, no glow/blur blobs, no glassmorphism,
    no sparkles/magic icons, no emoji, no tinted icon squares on every card, no "rounded-2xl everything",
    no generic hero illustrations. Copy is short, human, sentence case, no exclamation marks.
 
@@ -78,7 +78,7 @@ glyphs or 2 px left bars — not big tinted pills. Labels are **outlined tags** 
 - **Logo:** wordmark "taskflow" in Geist semibold lowercase with a small vermilion mark (e.g. a square
   with a notch / a check-slash glyph). Update favicon to match.
 
-## Rules for the redesign agents
+## Implementation rules
 - Visual/UI only. Do not change behaviour, data flow, hooks, API calls, props contracts or tests.
 - Keep accessibility: contrast >= 4.5:1 for text, visible focus, labels, touch targets >= 36 px.
 - Keep dark mode working with the tokens above.
