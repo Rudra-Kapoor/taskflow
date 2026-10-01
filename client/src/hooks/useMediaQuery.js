@@ -1,0 +1,20 @@
+import { useCallback, useSyncExternalStore } from 'react';
+
+/**
+ * Subscribes to a CSS media query.
+ * @example const isDesktop = useMediaQuery('(min-width: 1024px)');
+ */
+export function useMediaQuery(query) {
+  const subscribe = useCallback(
+    (onChange) => {
+      const media = window.matchMedia(query);
+      media.addEventListener('change', onChange);
+      return () => media.removeEventListener('change', onChange);
+    },
+    [query],
+  );
+
+  const getSnapshot = () => window.matchMedia(query).matches;
+
+  return useSyncExternalStore(subscribe, getSnapshot, () => false);
+}

@@ -1,0 +1,34 @@
+# Render Blueprint: https://render.com/docs/blueprint-spec
+# One web service serves the REST API, the Socket.IO server and the built React app
+# from the same origin (no CORS or cross-site cookie issues, WebSockets supported).
+services:
+  - type: web
+    name: taskflow
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: MONGOMS_DISABLE_POSTINSTALL
+        value: '1'
+      - key: MONGO_URI
+        sync: false # paste your MongoDB Atlas connection string in the Render dashboard
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      # Render's load balancer is the one proxy in front of the app: trusting exactly one hop of
+      # X-Forwarded-For makes the rate limits see the real client IP.
+      - key: TRUST_PROXY
+        value: '1'
+      # CLIENT_URL defaults to Render's RENDER_EXTERNAL_URL (same-origin SPA); set it only if
+      # the React app is hosted on a different domain.
+      - key: SEED_ON_EMPTY_DB
+        value: 'true'

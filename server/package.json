@@ -1,0 +1,38 @@
+{
+  "name": "taskflow-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "TaskFlow REST API + Socket.IO server",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch-path=src src/index.js",
+    "start": "node src/index.js",
+    "seed": "node src/seed/run.js",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-rate-limit": "^8.0.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.24.0",
+    "morgan": "^1.10.1",
+    "socket.io": "^4.8.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^10.4.3",
+    "socket.io-client": "^4.8.1",
+    "supertest": "^7.1.4",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

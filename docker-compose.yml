@@ -1,0 +1,42 @@
+# Local MongoDB for development:
+#   docker compose up -d mongo
+# Full production-like stack on http://localhost:5000:
+#   JWT_SECRET=$(openssl rand -hex 32) docker compose --profile app up --build
+services:
+  mongo:
+    image: mongo:7
+    container_name: taskflow-mongo
+    restart: unless-stopped
+    ports:
+      - '27017:27017'
+    volumes:
+      - taskflow-mongo-data:/data/db
+    healthcheck:
+      test: ['CMD', 'mongosh', '--quiet', '--eval', 'db.runCommand({ ping: 1 }).ok']
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: taskflow-app
+    profiles: ['app']
+    depends_on:
+      mongo:
+        condition: service_healthy
+    ports:
+      - '5000:5000'
+    environment:
+      NODE_ENV: production
+      PORT: 5000
+      MONGO_URI: mongodb://mongo:27017/taskflow
+      # No default secret: without JWT_SECRET (16+ chars) the server refuses to start. A required
+      # `${JWT_SECRET:?...}` would also break `docker compose up -d mongo`, because Compose
+      # interpolates every service whatever the active profiles.
+      JWT_SECRET: ${JWT_SECRET:-}
+      CLIENT_URL: http://localhost:5000
+      SEED_ON_EMPTY_DB: 'true'
+
+volumes:
+  taskflow-mongo-data:
+    name: taskflow-mongo-data

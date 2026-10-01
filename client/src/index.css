@@ -1,0 +1,194 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* -------------------------------------------------------------------------------------------------
+ * Design tokens. Values are "R G B" triplets so Tailwind opacity modifiers work
+ * (e.g. `bg-surface/80`). Light values live on :root, dark values on `.dark` (set on <html>).
+ * ---------------------------------------------------------------------------------------------- */
+@layer base {
+  :root {
+    --color-canvas: 246 247 251;
+    --color-surface: 255 255 255;
+    --color-surface-muted: 241 243 248;
+    --color-surface-hover: 238 240 246;
+    --color-line: 227 230 239;
+    --color-line-strong: 193 199 213;
+    --color-fg: 15 23 42;
+    --color-fg-muted: 91 100 122;
+    --color-fg-subtle: 101 109 130;
+    color-scheme: light;
+  }
+
+  .dark {
+    --color-canvas: 11 14 22;
+    --color-surface: 18 23 37;
+    --color-surface-muted: 23 29 44;
+    --color-surface-hover: 29 36 53;
+    --color-line: 36 44 63;
+    --color-line-strong: 58 68 93;
+    --color-fg: 230 233 242;
+    --color-fg-muted: 154 163 184;
+    --color-fg-subtle: 133 142 163;
+    color-scheme: dark;
+  }
+
+  html {
+    @apply bg-canvas text-fg antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply min-h-screen bg-canvas text-sm text-fg;
+  }
+
+  ::selection {
+    @apply bg-brand-500/20;
+  }
+
+  /* Thin, theme-aware scrollbars everywhere. */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-line-strong)) transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: 9999px;
+    background-color: rgb(var(--color-line-strong));
+    background-clip: content-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(var(--color-fg-subtle));
+  }
+
+  /* Native date-picker icon: muted like the other input icons and following the theme. */
+  input[type='date']::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    border-radius: 0.25rem;
+    opacity: 0.55;
+    transition: opacity 150ms;
+  }
+
+  input[type='date']::-webkit-calendar-picker-indicator:hover {
+    opacity: 0.9;
+  }
+
+  .dark input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+}
+
+/* -------------------------------------------------------------------------------------------------
+ * Reusable component classes.
+ * ---------------------------------------------------------------------------------------------- */
+@layer components {
+  .card {
+    @apply rounded-xl border border-line bg-surface shadow-sm;
+  }
+
+  .input-base {
+    @apply block w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-fg shadow-xs;
+    @apply placeholder:text-fg-subtle;
+    @apply transition-[border-color,box-shadow] duration-150;
+    @apply hover:border-fg-subtle/50;
+    @apply focus:border-brand-500 focus:outline-none focus:ring-[3px] focus:ring-brand-500/20;
+    @apply disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-fg-muted;
+    @apply disabled:hover:border-line-strong;
+  }
+
+  .input-error {
+    @apply border-rose-500 hover:border-rose-500 focus:border-rose-500 focus:ring-rose-500/20;
+    @apply dark:border-rose-500/80;
+  }
+
+  /* Native <select> with a custom chevron (no wrapper element needed), drawn in fg-subtle. */
+  .select-chevron {
+    appearance: none;
+    padding-right: 2.25rem;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23656d82' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.75' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.625rem center;
+    background-repeat: no-repeat;
+    background-size: 1.125rem;
+  }
+
+  .dark .select-chevron {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23858ea3' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.75' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  }
+
+  /* Keyboard focus: solid brand ring, separated from the control by a gap in the surface colour. */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500;
+    @apply focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
+  }
+
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-line-strong)) transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-brand-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent;
+    @apply dark:from-brand-400 dark:via-violet-400 dark:to-fuchsia-400;
+  }
+
+  /* Decorative dotted grid used on marketing-style surfaces (auth panel, 404). */
+  .bg-dot-grid {
+    background-image: radial-gradient(rgb(255 255 255 / 0.18) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .bg-dot-grid-muted {
+    background-image: radial-gradient(rgb(var(--color-fg-subtle) / 0.22) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
+/* Disables transitions while the theme flips so every surface changes colour at once. */
+.theme-switching,
+.theme-switching *,
+.theme-switching *::before,
+.theme-switching *::after {
+  transition: none !important;
+}
+
+/* Respect reduced-motion preferences (loading spinners keep turning so progress stays visible). */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.animate-spin),
+  *:not(.animate-spin)::before,
+  *:not(.animate-spin)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

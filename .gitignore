@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Builds
+client/dist/
+build/
+coverage/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Local dev database (in-memory MongoDB persisted to disk)
+server/.data/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
