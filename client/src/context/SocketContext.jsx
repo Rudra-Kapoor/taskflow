@@ -5,6 +5,7 @@ import { io } from 'socket.io-client';
 import { API_BASE_URL, recoverRejectedToken, tokenStorage } from '@/api/client';
 import { invalidateProjectTasks } from '@/lib/cache';
 import { registerRealtimeHandlers } from '@/realtime/handlers';
+import { POLL_MODE } from '@/lib/realtimeMode';
 import { useAuth } from './AuthContext';
 
 /** Socket.IO origin: `VITE_SOCKET_URL`, else the API's (this page's when the API is relative). */
@@ -109,7 +110,8 @@ export function SocketProvider({ children }) {
   );
 
   useEffect(() => {
-    if (!isAuthenticated || !userId) return undefined;
+    // Poll mode (serverless hosting): no socket; queries refresh on an interval instead.
+    if (!isAuthenticated || !userId || POLL_MODE) return undefined;
 
     let handshakeToken = null; // token sent by the latest connection attempt
     let resyncOnConnect = false; // set while offline: the next connect refetches everything
@@ -267,7 +269,9 @@ export function SocketProvider({ children }) {
     [queryClient],
   );
 
-  const socketValue = useMemo(() => ({ socket, isConnected }), [socket, isConnected]);
+  // In poll mode data stays in sync through interval refetches, so the app counts as connected.
+  const connected = POLL_MODE ? isAuthenticated : isConnected;
+  const socketValue = useMemo(() => ({ socket, isConnected: connected }), [socket, connected]);
   const roomsValue = useMemo(
     () => ({ presence, joinProject, leaveProject }),
     [presence, joinProject, leaveProject],

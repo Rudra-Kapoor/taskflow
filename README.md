@@ -243,10 +243,10 @@ on a different origin than the React app. Leave empty to use the same origin / t
 ### Vercel + MongoDB Atlas (live demo)
 
 The live demo runs on Vercel ([`vercel.json`](vercel.json)): the React build is served as static files and
-the whole Express API + Socket.IO server runs as one serverless function (`api/[...path].js` ->
+the whole Express API + Socket.IO server runs as one serverless function (`api/index.js` ->
 `server/src/serverless.js`). Serverless functions cannot hold WebSocket connections, so on Vercel Socket.IO
-uses HTTP long-polling under `/api/socket.io` (`SOCKET_PATH`, `VITE_SOCKET_PATH`,
-`VITE_SOCKET_TRANSPORTS=polling`). The database is MongoDB Atlas provisioned through the Vercel Marketplace
+would need sticky sessions, which Vercel doesn't offer, so the Vercel build sets `VITE_REALTIME_MODE=poll`: every
+open view (board, task, notifications, dashboard) refreshes itself every 4 s instead of receiving pushes. The database is MongoDB Atlas provisioned through the Vercel Marketplace
 (it injects `MONGODB_URI`). For full WebSocket transport and the due-date reminder job, use a long-running
 host such as Render (below) or Docker.
 

@@ -1,4 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
+import { POLL_INTERVAL_MS, POLL_MODE } from '@/lib/realtimeMode';
 
 const MAX_RETRIES = 1;
 const RETRY_DELAY_MS = 800;
@@ -24,8 +25,10 @@ export const queryClient = new QueryClient({
       retry: shouldRetryRequest,
       retryDelay: RETRY_DELAY_MS,
       refetchOnWindowFocus: true,
+      // Poll mode (serverless hosting, no socket): mounted queries refresh themselves.
+      refetchInterval: POLL_MODE ? POLL_INTERVAL_MS : false,
       // Back online, the socket reconnects and refetches everything (SocketContext resync).
-      refetchOnReconnect: false,
+      refetchOnReconnect: POLL_MODE,
     },
     mutations: {
       retry: 0,
