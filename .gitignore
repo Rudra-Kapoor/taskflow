@@ -29,3 +29,7 @@ Thumbs.db
 .vercel
 
 .env*
+
+# Tooling folders added by CLIs (not part of the project)
+.agents/
+.claude/
