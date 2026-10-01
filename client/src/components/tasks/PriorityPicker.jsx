@@ -1,20 +1,16 @@
-import { PriorityBadge } from '@/components/ui';
 import { PRIORITY_META, TASK_PRIORITIES } from '@/lib/constants';
 import { OptionPicker } from './OptionPicker';
 import { PickerTrigger } from './PickerTrigger';
+import { PriorityGlyph } from './TaskGlyphs';
 
 /** Urgent first, like most trackers list them. */
 const PRIORITY_OPTIONS = [...TASK_PRIORITIES].reverse().map((priority) => ({
   value: priority.value,
   label: priority.label,
-  icon: (
-    <span aria-hidden="true" className="flex">
-      <PriorityBadge priority={priority.value} showLabel={false} size="sm" />
-    </span>
-  ),
+  icon: <PriorityGlyph priority={priority.value} className="mx-0.5" />,
 }));
 
-/** Task priority select with the coloured priority icons. `variant`: `field` | `ghost`. */
+/** Task priority select with the signal-bar priority glyphs. `variant`: `field` | `ghost`. */
 export function PriorityPicker({ value, onChange, disabled, variant = 'field', id, className }) {
   const meta = PRIORITY_META[value] ?? PRIORITY_META.medium;
 
@@ -22,9 +18,7 @@ export function PriorityPicker({ value, onChange, disabled, variant = 'field', i
     <OptionPicker
       trigger={
         <PickerTrigger id={id} variant={variant} className={className}>
-          <span aria-hidden="true" className="flex">
-            <PriorityBadge priority={meta.value} showLabel={false} size="sm" />
-          </span>
+          <PriorityGlyph priority={meta.value} className="mx-0.5" />
           <span className="truncate">{meta.label}</span>
         </PickerTrigger>
       }

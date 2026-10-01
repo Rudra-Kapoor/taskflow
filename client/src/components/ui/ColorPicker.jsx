@@ -67,15 +67,16 @@ export function ColorPicker({
             className="focus-ring group flex h-9 w-9 items-center justify-center rounded-full"
           >
             <span
-              style={{ backgroundColor: color, '--tw-ring-color': color }}
+              style={{ backgroundColor: color }}
               className={cn(
-                'flex h-7 w-7 items-center justify-center rounded-full shadow-sm',
-                'transition-transform duration-150 group-hover:scale-110',
-                isSelected && 'ring-2 ring-offset-2 ring-offset-surface',
+                'flex h-6 w-6 items-center justify-center rounded-full',
+                'shadow-[inset_0_0_0_1px_rgb(0_0_0/0.12)] transition-transform duration-150',
+                'group-hover:scale-105',
+                isSelected && 'ring-2 ring-fg ring-offset-2 ring-offset-surface',
               )}
             >
               {isSelected && (
-                <Check className="h-3.5 w-3.5 text-white" strokeWidth={3} aria-hidden="true" />
+                <Check className="h-3 w-3 text-white" strokeWidth={3} aria-hidden="true" />
               )}
             </span>
           </button>

@@ -6,7 +6,7 @@ import { KeyRound } from 'lucide-react';
 import { applyFieldErrors, getErrorMessage } from '@/api/client';
 import { Button, FormField, PasswordInput, PasswordStrength } from '@/components/ui';
 import { useChangePassword } from '@/hooks/queries/auth';
-import { SettingsCard } from './SettingsSection';
+import { SettingsPanel } from './SettingsSection';
 
 /** Mirrors the API policy: 8-72 characters with a letter and a number, different from the old. */
 const passwordSchema = z
@@ -73,7 +73,7 @@ export function PasswordForm() {
   };
 
   return (
-    <SettingsCard
+    <SettingsPanel
       as="form"
       onSubmit={handleSubmit(onSubmit)}
       noValidate
@@ -112,6 +112,6 @@ export function PasswordForm() {
       </div>
 
       <PasswordStrength password={newPassword} />
-    </SettingsCard>
+    </SettingsPanel>
   );
 }

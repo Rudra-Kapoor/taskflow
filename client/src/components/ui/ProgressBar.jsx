@@ -1,9 +1,9 @@
 import { cn } from '@/lib/cn';
 
-const SIZES = { sm: 'h-1.5', md: 'h-2', lg: 'h-2.5' };
+const SIZES = { sm: 'h-1', md: 'h-1.5', lg: 'h-2' };
 
 /**
- * Horizontal progress bar. `color` is a hex value (e.g. a project colour) or Tailwind bg class.
+ * Thin horizontal progress bar (vermilion by default). `color` is a hex value (e.g. a project colour) or Tailwind bg class.
  */
 export function ProgressBar({ value = 0, color = 'bg-brand-500', size = 'sm', label, className }) {
   const percent = Math.min(100, Math.max(0, Number(value) || 0));
@@ -17,7 +17,7 @@ export function ProgressBar({ value = 0, color = 'bg-brand-500', size = 'sm', la
       aria-valuemax={100}
       aria-label={label}
       className={cn(
-        'w-full overflow-hidden rounded-full bg-line/70',
+        'w-full overflow-hidden rounded-full bg-fg/[0.08] dark:bg-fg/[0.12]',
         SIZES[size] ?? SIZES.sm,
         className,
       )}

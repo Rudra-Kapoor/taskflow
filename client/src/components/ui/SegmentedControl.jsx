@@ -39,7 +39,7 @@ export function SegmentedControl({
       role="radiogroup"
       aria-label={ariaLabel}
       className={cn(
-        'inline-flex items-center gap-0.5 rounded-lg border border-line bg-surface-muted p-0.5',
+        'inline-flex items-center gap-0.5 rounded-md border border-line bg-surface-muted p-0.5',
         className,
       )}
     >
@@ -61,12 +61,12 @@ export function SegmentedControl({
             onClick={() => onChange(option.value)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
-              'focus-ring inline-flex items-center justify-center gap-1.5 rounded-md font-medium',
+              'focus-ring inline-flex items-center justify-center gap-1.5 rounded font-medium',
               'transition-[color,background-color,box-shadow] duration-150',
               sizing.button,
               active
-                ? 'bg-surface text-fg shadow-sm ring-1 ring-line dark:bg-surface-hover'
-                : 'text-fg-muted hover:text-fg',
+                ? 'bg-fg text-canvas'
+                : 'text-fg-muted hover:bg-surface-hover hover:text-fg',
             )}
           >
             {Icon && <Icon className={sizing.icon} aria-hidden="true" />}

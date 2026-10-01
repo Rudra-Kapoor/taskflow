@@ -2,8 +2,8 @@ import { cn } from '@/lib/cn';
 import { renderIcon } from './renderIcon';
 
 /**
- * Friendly placeholder for empty lists / searches.
- * `icon` accepts a lucide component or an element; `action` is any node (usually a Button).
+ * Quiet placeholder for empty lists / searches: a short serif headline, one line of copy and one
+ * action. `icon` (a lucide component or an element) is drawn as a tiny line icon, never a tile.
  */
 export function EmptyState({ icon, title, description, action, compact = false, className }) {
   return (
@@ -17,19 +17,28 @@ export function EmptyState({ icon, title, description, action, compact = false, 
       {icon && (
         <div
           className={cn(
-            'mb-4 flex items-center justify-center rounded-2xl bg-brand-50 text-brand-600',
-            'ring-1 ring-inset ring-brand-600/10 dark:bg-brand-500/10 dark:text-brand-300',
-            'dark:ring-brand-400/20',
-            compact
-              ? 'h-10 w-10'
-              : 'h-12 w-12 shadow-[0_0_0_6px_rgb(99_102_241/0.06)] dark:shadow-[0_0_0_6px_rgb(99_102_241/0.08)]',
+            'flex items-center justify-center text-fg-subtle',
+            compact ? 'mb-2.5' : 'mb-3.5',
           )}
         >
-          {renderIcon(icon, compact ? 'h-5 w-5' : 'h-6 w-6')}
+          {renderIcon(icon, compact ? 'h-4 w-4' : 'h-5 w-5')}
         </div>
       )}
-      {title && <h3 className="text-sm font-semibold text-fg">{title}</h3>}
-      {description && <p className="mt-1 max-w-sm text-sm text-fg-muted">{description}</p>}
+      {title && (
+        <h3
+          className={cn(
+            'font-display font-normal leading-[1.15] tracking-[-0.005em] text-fg',
+            compact ? 'text-[21px]' : 'text-[26px]',
+          )}
+        >
+          {title}
+        </h3>
+      )}
+      {description && (
+        <p className={cn('max-w-sm text-sm text-fg-muted', compact ? 'mt-1' : 'mt-1.5')}>
+          {description}
+        </p>
+      )}
       {action && (
         <div className="mt-5 flex flex-wrap items-center justify-center gap-2">{action}</div>
       )}

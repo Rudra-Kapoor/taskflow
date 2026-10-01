@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowDownUp, CheckCircle2, SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal, X } from 'lucide-react';
 import { Button, FormField, Modal, SearchInput, Select } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { DUE_FILTERS, TASK_PRIORITIES, TASK_SORT_OPTIONS, TASK_STATUSES } from '@/lib/constants';
@@ -24,9 +24,14 @@ const ASSIGNEE_OPTIONS = [
 
 const DUE_OPTIONS = DUE_FILTERS.map(({ value, label }) => ({ value, label }));
 
-/** Highlight of a control that currently narrows the results. */
-const ACTIVE_CONTROL =
-  'border-brand-300 bg-brand-50/70 font-medium text-brand-700 dark:border-brand-400/40 dark:bg-brand-500/10 dark:text-brand-200';
+/** Quiet hairline control of the toolbar (inline selects, sort, search). */
+const QUIET_CONTROL = 'border-line bg-transparent shadow-none hover:border-line-strong';
+
+/** A control that currently narrows the results turns ink. */
+const ACTIVE_CONTROL = 'border-fg/40 font-medium text-fg hover:border-fg/60 dark:border-fg/45';
+
+/** Small mono capitals naming a control ("Sort"). */
+const CONTROL_EYEBROW = 'font-mono text-[11px] uppercase tracking-[0.08em] text-fg-muted';
 
 /** `completedWithin` chip label: "Completed in the last 7 days". */
 const describeCompletedWithin = (days) =>
@@ -56,16 +61,16 @@ function groupProjectsByTeam(projects) {
 }
 
 /**
- * Native select that is highlighted while it narrows the results. `stacked` (filters sheet)
- * gives it a visible label above; inline it is compact (`width`) and labelled for assistive
- * tech only.
+ * Native select that turns ink while it narrows the results. `stacked` (filters sheet) gives it
+ * a visible label above; inline it is a compact hairline control (`width`) labelled for
+ * assistive tech only.
  */
 function FilterSelect({
   label,
   value,
   onChange,
   stacked,
-  width = 'w-auto min-w-[9rem]',
+  width = 'w-auto min-w-[8rem]',
   children,
 }) {
   const select = (
@@ -74,7 +79,10 @@ function FilterSelect({
       title={stacked ? undefined : label}
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className={cn(!stacked && ['h-8 text-[13px]', width], value && ACTIVE_CONTROL)}
+      className={cn(
+        !stacked && [QUIET_CONTROL, 'h-8 rounded-md text-[13px] text-fg-muted', width],
+        value && ACTIVE_CONTROL,
+      )}
     >
       {children}
     </Select>
@@ -92,10 +100,10 @@ function ArchivedToggle({ checked, onChange, stacked }) {
   return (
     <label
       className={cn(
-        'inline-flex cursor-pointer select-none items-center gap-2.5 rounded-lg text-[13px] font-medium',
+        'inline-flex cursor-pointer select-none items-center gap-2 rounded-md text-[13px]',
         'transition-colors duration-150',
-        shown ? 'text-fg' : 'text-fg-muted hover:text-fg',
-        stacked ? 'min-h-11 w-full border border-line px-3' : 'h-8 px-1.5',
+        shown ? 'font-medium text-fg' : 'text-fg-muted hover:text-fg',
+        stacked ? 'min-h-11 w-full border border-line px-3' : 'h-8 whitespace-nowrap px-1',
       )}
     >
       <input
@@ -105,7 +113,7 @@ function ArchivedToggle({ checked, onChange, stacked }) {
           setPending(event.target.checked);
           onChange(event.target.checked);
         }}
-        className="focus-ring h-4 w-4 shrink-0 cursor-pointer rounded accent-brand-600"
+        className="focus-ring h-3.5 w-3.5 shrink-0 cursor-pointer rounded-sm accent-brand-600"
       />
       Include archived projects
     </label>
@@ -113,22 +121,21 @@ function ArchivedToggle({ checked, onChange, stacked }) {
 }
 
 /** A filter without a select of its own (set by a link, e.g. from the dashboard), removable. */
-function RemovableChip({ icon: Icon, label, onRemove }) {
+function RemovableChip({ label, onRemove }) {
   return (
     <span
       className={cn(
-        'inline-flex h-8 max-w-full items-center gap-1 rounded-full border pl-3 pr-0.5 text-[13px]',
+        'inline-flex h-8 max-w-full items-center gap-1 rounded-md border pl-2.5 pr-0.5 text-[13px]',
         ACTIVE_CONTROL,
       )}
     >
-      <Icon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
       <span className="truncate">{label}</span>
       <button
         type="button"
         onClick={onRemove}
         aria-label={`Remove filter: ${label}`}
         title="Remove filter"
-        className="focus-ring inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-brand-600 transition-colors hover:bg-brand-100 hover:text-brand-800 dark:text-brand-300 dark:hover:bg-brand-500/20 dark:hover:text-brand-100"
+        className="focus-ring inline-flex h-7 w-7 shrink-0 items-center justify-center rounded text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
       >
         <X className="h-3.5 w-3.5" aria-hidden="true" />
       </button>
@@ -178,7 +185,7 @@ function FilterFields({ filters, onChange, projectGroups, stacked = false }) {
         value={filters.project}
         onChange={(project) => onChange({ project })}
         stacked={stacked}
-        width="w-48"
+        width="w-40"
       >
         <option value="">All projects</option>
         {projectGroups.map((group) => (
@@ -195,7 +202,6 @@ function FilterFields({ filters, onChange, projectGroups, stacked = false }) {
       {filters.completedWithin && (
         <div className={stacked ? 'flex' : 'contents'}>
           <RemovableChip
-            icon={CheckCircle2}
             label={describeCompletedWithin(filters.completedWithin)}
             onRemove={() => onChange({ completedWithin: '' })}
           />
@@ -233,16 +239,22 @@ export function TaskFilterBar({
       aria-label="Search the task list"
       maxLength={200}
       className="min-w-0 flex-1"
+      inputClassName={QUIET_CONTROL}
     />
   );
   const sort = (
-    <div className={cn('flex items-center gap-2', collapsed && 'min-w-0 flex-1')}>
-      <ArrowDownUp className="h-4 w-4 shrink-0 text-fg-subtle" aria-hidden="true" />
+    <div className={cn('flex items-center gap-2.5', collapsed && 'min-w-0 flex-1')}>
+      <span aria-hidden="true" className={cn(CONTROL_EYEBROW, collapsed && 'hidden sm:inline')}>
+        Sort
+      </span>
       <Select
         aria-label="Sort tasks"
         value={filters.sort}
         onChange={(event) => onChange({ sort: event.target.value })}
-        className={collapsed ? 'min-w-0 flex-1' : 'w-48'}
+        className={cn(
+          QUIET_CONTROL,
+          collapsed ? 'min-w-0 flex-1' : 'h-8 w-48 rounded-md text-[13px]',
+        )}
       >
         {renderOptions(TASK_SORT_OPTIONS)}
       </Select>
@@ -258,14 +270,15 @@ export function TaskFilterBar({
 
   if (!collapsed) {
     return (
-      <div className="space-y-3 border-b border-line p-5">
+      <div className="border-b border-line px-5 py-4">
         {/* The archived toggle widens what is searched, so it sits with the search box. */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {search}
           <div className="shrink-0">{archivedToggle}</div>
+          <span aria-hidden="true" className="h-5 w-px shrink-0 bg-line" />
           {sort}
         </div>
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
           <FilterFields filters={filters} onChange={onChange} projectGroups={projectGroups} />
           {canClear && (
             <Button variant="ghost" size="sm" icon={X} onClick={onClear} className="ml-auto">
@@ -280,7 +293,7 @@ export function TaskFilterBar({
   return (
     <div className="space-y-3 border-b border-line p-4">
       {search}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <Button
           variant="secondary"
           icon={SlidersHorizontal}
@@ -289,7 +302,7 @@ export function TaskFilterBar({
         >
           Filters
           {activeCount > 0 && (
-            <span className="ml-0.5 min-w-[20px] rounded-full bg-brand-600 px-1.5 py-0.5 text-center text-[11px] font-semibold leading-none text-white">
+            <span className="ml-0.5 inline-flex h-[18px] min-w-[18px] items-center justify-center rounded bg-fg px-1 font-mono text-[11px] font-medium leading-none tabular-nums text-canvas">
               {activeCount}
               <span className="sr-only"> active</span>
             </span>

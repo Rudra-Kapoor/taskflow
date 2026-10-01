@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { ListTodo, SearchX } from 'lucide-react';
 import { LoadingBar } from '@/components/mytasks/LoadingBar';
 import { NoTasksYet } from '@/components/mytasks/NoTasksYet';
 import { Pagination } from '@/components/mytasks/Pagination';
@@ -37,7 +36,7 @@ export function MyTasksPage() {
     setFilters({ search }),
   );
   const { data: projects } = useProjects(ALL_PROJECTS);
-  useDocumentTitle(filters.search.trim() ? `Search “${filters.search.trim()}”` : 'My Tasks');
+  useDocumentTitle(filters.search.trim() ? `Search “${filters.search.trim()}”` : 'My tasks');
 
   const { data, isLoading, isFetching, isError, error, refetch } = useSearchTasks({
     ...filters,
@@ -68,12 +67,7 @@ export function MyTasksPage() {
   let results;
   if (isError && !data) {
     results = (
-      <ErrorState
-        title="Couldn’t load tasks"
-        error={error}
-        onRetry={refetch}
-        className="border-t border-line"
-      />
+      <ErrorState title="Couldn’t load tasks" error={error} onRetry={refetch} />
     );
   } else if (isLoading) {
     results = <TaskResultsSkeleton />;
@@ -84,7 +78,6 @@ export function MyTasksPage() {
   } else if (tasks.length === 0) {
     results = (
       <EmptyState
-        icon={SearchX}
         title="No tasks match your filters"
         description="Try another search term, or loosen a filter or two."
         action={
@@ -111,9 +104,9 @@ export function MyTasksPage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl">
-      <PageHeader icon={ListTodo} title="My Tasks" description={summary} />
+      <PageHeader eyebrow="Your work" title="My tasks" description={summary} />
 
-      <QuickFilters filters={filters} onApply={applyPreset} className="mb-4" />
+      <QuickFilters filters={filters} onApply={applyPreset} className="mb-5" />
 
       <section ref={resultsRef} aria-label="Task results" className="scroll-mt-4">
         <Card padding={false} className="relative overflow-hidden">

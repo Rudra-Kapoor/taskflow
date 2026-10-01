@@ -29,16 +29,22 @@ function ActivitySkeleton({ rows, compact }) {
           <Skeleton className={cn('shrink-0 rounded-full', compact ? 'h-6 w-6' : 'h-8 w-8')} />
           <div className="flex-1 space-y-2 pt-1">
             <Skeleton
-              className="h-3.5"
+              className="h-3"
               style={{ width: `${[85, 65, 75, 55, 80, 60][index % 6]}%` }}
             />
-            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-2.5 w-16" />
           </div>
         </li>
       ))}
     </ul>
   );
 }
+
+/** Thin rule from one avatar to the next (gaps of 6px at both ends). */
+const CONNECTOR = {
+  compact: 'left-[11px] top-[30px] -bottom-[10px]',
+  regular: 'left-[15px] top-[38px] -bottom-[14px]',
+};
 
 /**
  * Activity timeline for any infinite activity query (`useActivityFeed`, `useProjectActivity`,
@@ -82,10 +88,10 @@ export function ActivityFeed({
   }
 
   return (
-    <div className={cn(compact ? 'space-y-5' : 'space-y-7', className)}>
+    <div className={cn(compact ? 'space-y-6' : 'space-y-8', className)}>
       {groups.map((group) => (
         <section key={group.key} aria-label={group.label}>
-          <h3 className="mb-3.5 flex items-center gap-3 text-2xs font-semibold uppercase tracking-wider text-fg-subtle">
+          <h3 className="mb-4 flex items-center gap-3 font-mono text-[11px] font-normal uppercase leading-4 tracking-[0.08em] text-fg-subtle">
             {group.label}
             <span className="h-px flex-1 bg-line" aria-hidden="true" />
           </h3>
@@ -93,12 +99,12 @@ export function ActivityFeed({
             {group.items.map((activity, index) => (
               <li key={activity._id} className="relative">
                 {index < group.items.length - 1 && (
-                  // Timeline connector from this avatar down to the next one.
+                  // Timeline rule from this avatar down to the next one.
                   <span
                     aria-hidden="true"
                     className={cn(
-                      'absolute w-px bg-line',
-                      compact ? '-bottom-4 left-3 top-8' : '-bottom-5 left-4 top-10',
+                      'absolute w-px bg-line-strong/70',
+                      compact ? CONNECTOR.compact : CONNECTOR.regular,
                     )}
                   />
                 )}

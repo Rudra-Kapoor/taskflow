@@ -5,6 +5,9 @@ import { cn } from '@/lib/cn';
 import { getId } from '@/lib/ids';
 import { TASK_LINK_STATE, withTaskParam } from '@/lib/taskLinks';
 
+/** "WEB-12 Fix login" -> ["WEB-12", "Fix login"], so task keys can be set in mono. */
+const TASK_KEY_PATTERN = /^([A-Z][A-Z0-9]{0,9}-\d+)\s+(.+)$/;
+
 /** Where the bold target of a sentence links to (`null` = plain text). */
 function useTargetLink(activity, targetType) {
   const location = useLocation();
@@ -21,25 +24,27 @@ function useTargetLink(activity, targetType) {
   return null;
 }
 
-/** Small tinted circle with the action icon (status change, comment, assignment, …). */
-function ActionIcon({ icon: Icon, tone, className }) {
+/** The sentence's object; a leading task key ("WEB-12") is set in mono. */
+function TargetText({ target, targetType }) {
+  const match = targetType === 'task' ? TASK_KEY_PATTERN.exec(target) : null;
+  if (!match) return target;
   return (
-    <span
-      aria-hidden="true"
-      className={cn('flex items-center justify-center rounded-full', tone, className)}
-    >
-      <Icon className="h-2.5 w-2.5" strokeWidth={2.75} />
-    </span>
+    <>
+      <span className="font-mono text-[0.92em] font-normal tracking-[0.01em] text-fg-muted">
+        {match[1]}
+      </span>{' '}
+      {match[2]}
+    </>
   );
 }
 
 /**
- * One activity log entry: "<Avatar> **Priya** moved **WEB-12 Fix login** from To Do to In Progress"
- * with an action icon, relative time and (for comments) the excerpt.
- * `compact` (side panels) uses a smaller avatar and shows the action icon next to the time.
+ * One activity log entry: "<Avatar> **Priya** moved WEB-12 **Fix login** from To Do to In Progress"
+ * with a mono meta line (action glyph + relative time) and, for comments, the excerpt set as a
+ * quote. `compact` (side panels, dashboard) uses a smaller avatar and type.
  */
 export function ActivityItem({ activity, showProject = false, compact = false, className }) {
-  const { verb, target, detail, quote, icon, tone, targetType } = describeActivity(activity);
+  const { verb, target, detail, quote, icon: Icon, targetType } = describeActivity(activity);
   const link = useTargetLink(activity, targetType);
   const actorName = activity.actor?.name ?? 'Someone';
   const projectName = activity.meta?.projectName;
@@ -51,23 +56,14 @@ export function ActivityItem({ activity, showProject = false, compact = false, c
     !activity.action?.startsWith('project.');
 
   return (
-    <div className={cn('relative flex', compact ? 'gap-2.5' : 'gap-3', className)}>
+    <div className={cn('relative flex', compact ? 'gap-3' : 'gap-3.5', className)}>
       <div className="relative flex shrink-0 self-start">
         <Avatar user={activity.actor ?? null} size={compact ? 'sm' : 'md'} decorative />
-        {!compact && (
-          <ActionIcon
-            icon={icon}
-            tone={tone}
-            className="absolute -bottom-1 -right-1.5 h-4 w-4 ring-2 ring-surface"
-          />
-        )}
       </div>
 
-      <div className={cn('min-w-0 flex-1', compact ? 'pt-px' : 'pt-0.5')}>
-        <p
-          className={cn('text-fg-muted', compact ? 'text-[13px]' : 'text-sm', 'leading-relaxed')}
-        >
-          <span className="font-semibold text-fg">{actorName}</span> {verb}
+      <div className={cn('min-w-0 flex-1', compact ? 'pt-[3px]' : 'pt-1.5')}>
+        <p className={cn('text-fg-muted', compact ? 'text-[13px] leading-[1.5]' : 'text-sm leading-[1.5]')}>
+          <span className="font-medium text-fg">{actorName}</span> {verb}
           {target && (
             <>
               {' '}
@@ -75,12 +71,14 @@ export function ActivityItem({ activity, showProject = false, compact = false, c
                 <Link
                   to={link.to}
                   state={link.state}
-                  className="rounded-sm font-semibold text-fg underline-offset-2 transition-colors hover:text-brand-600 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 dark:hover:text-brand-300"
+                  className="rounded-sm font-medium text-fg underline decoration-transparent underline-offset-[3px] transition-colors hover:decoration-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                 >
-                  {target}
+                  <TargetText target={target} targetType={targetType} />
                 </Link>
               ) : (
-                <span className="font-semibold text-fg">{target}</span>
+                <span className="font-medium text-fg">
+                  <TargetText target={target} targetType={targetType} />
+                </span>
               )}
             </>
           )}
@@ -88,7 +86,7 @@ export function ActivityItem({ activity, showProject = false, compact = false, c
           {showProjectName && (
             <>
               {' '}
-              in <span className="font-medium text-fg">{projectName}</span>
+              in <span className="text-fg">{projectName}</span>
             </>
           )}
         </p>
@@ -96,16 +94,16 @@ export function ActivityItem({ activity, showProject = false, compact = false, c
         {quote && (
           <p
             className={cn(
-              'mt-1.5 line-clamp-3 rounded-lg border border-line bg-surface-muted/60 px-3 py-2 text-fg-muted',
-              compact ? 'text-xs' : 'text-[13px]',
+              'mt-1.5 line-clamp-3 border-l-2 border-line-strong pl-3 text-fg-muted',
+              compact ? 'text-[13px] leading-[1.5]' : 'text-sm leading-[1.5]',
             )}
           >
             {quote}
           </p>
         )}
 
-        <div className="mt-0.5 flex items-center gap-1.5 text-xs text-fg-subtle">
-          {compact && <ActionIcon icon={icon} tone={tone} className="h-4 w-4" />}
+        <div className="mt-1 flex items-center gap-1.5 font-mono text-[11px] leading-4 tabular-nums text-fg-subtle">
+          {Icon && <Icon className="h-3 w-3 shrink-0" strokeWidth={2} aria-hidden="true" />}
           <TimeAgo date={activity.createdAt} />
         </div>
       </div>

@@ -42,11 +42,10 @@ export function Tooltip({
         role="tooltip"
         id={id}
         className={cn(
-          'pointer-events-none absolute z-50 w-max max-w-[16rem] rounded-md bg-slate-900 px-2 py-1',
-          'text-xs font-medium leading-snug text-white opacity-0 shadow-lg transition duration-150',
+          'pointer-events-none absolute z-50 w-max max-w-[16rem] rounded-[5px] bg-fg px-2 py-1',
+          'text-xs font-medium leading-snug text-canvas opacity-0 shadow-popover transition duration-150',
           'group-hover/tooltip:opacity-100 group-hover/tooltip:delay-300',
           'group-has-[:focus-visible]/tooltip:translate-y-0 group-has-[:focus-visible]/tooltip:opacity-100',
-          'dark:bg-slate-700',
           SIDES[side] ?? SIDES.top,
           ALIGNS[align] ?? ALIGNS.center,
           contentClassName,

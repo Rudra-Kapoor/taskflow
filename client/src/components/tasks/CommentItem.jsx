@@ -50,16 +50,24 @@ export function CommentItem({ comment, isOwn, canEdit, canDelete, onUpdate, onRe
   const authorName = comment.author?.name ?? 'Former member';
 
   return (
-    <li id={`comment-${comment._id}`} className="group/comment flex scroll-mt-20 gap-3">
-      <Avatar user={comment.author ?? null} size="md" decorative className="mt-0.5" />
+    <li id={`comment-${comment._id}`} className="group/comment relative flex scroll-mt-20 gap-3">
+      {/* Thread rule from this avatar down to the next comment (hidden on the last one). */}
+      <span
+        aria-hidden="true"
+        className="absolute -bottom-4 left-3 top-[34px] w-px bg-line group-last/comment:hidden"
+      />
+      <Avatar user={comment.author ?? null} size="sm" decorative className="mt-0.5" />
       <div className="min-w-0 flex-1">
         <div className="flex min-h-7 flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className="text-sm font-semibold text-fg">{authorName}</span>
+          <span className="text-[13px] font-medium text-fg">{authorName}</span>
           {isOwn && (
-            <span className="rounded bg-surface-muted px-1 py-px text-2xs font-medium uppercase tracking-wide text-fg-muted dark:bg-surface-hover">
-              You
+            <span className="rounded-sm border border-line px-1 font-mono text-[11px] leading-4 text-fg-muted">
+              you
             </span>
           )}
+          <span aria-hidden="true" className="text-fg-subtle">
+            ·
+          </span>
           <TimeAgo date={comment.createdAt} className="text-xs text-fg-muted" />
           {comment.editedAt && (
             <span
@@ -123,7 +131,7 @@ export function CommentItem({ comment, isOwn, canEdit, canDelete, onUpdate, onRe
             </div>
           </div>
         ) : (
-          <div className="mt-1 whitespace-pre-wrap break-words rounded-xl rounded-tl-sm bg-surface-muted/80 px-3.5 py-2.5 text-sm leading-relaxed text-fg [overflow-wrap:anywhere] dark:bg-surface-hover/70">
+          <div className="mt-0.5 whitespace-pre-wrap break-words text-sm leading-relaxed text-fg [overflow-wrap:anywhere]">
             {comment.body}
           </div>
         )}

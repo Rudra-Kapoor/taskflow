@@ -4,7 +4,9 @@ import { useAutoResize } from '@/hooks/board/useAutoResize';
 import { cn } from '@/lib/cn';
 
 const MAX_TITLE_LENGTH = 200;
-const TITLE_CLASSES = 'text-lg font-semibold leading-snug tracking-tight text-fg sm:text-xl';
+/** Display serif, like the board title: the task reads as the headline of its page. */
+const TITLE_CLASSES =
+  'font-display text-[28px] font-normal leading-[1.12] tracking-[-0.01em] text-fg sm:text-[34px]';
 
 /**
  * Inline title editing: click to edit, Enter or leaving the field saves, Escape cancels.
@@ -44,7 +46,7 @@ export function TaskTitleEditor({ title, readOnly, onSave }) {
           data-autofocus
           onClick={() => setEdit({ draft: title, initial: title })}
           title="Click to edit the title"
-          className="focus-ring -mx-2 block w-[calc(100%+1rem)] break-words rounded-lg px-2 py-1 text-left transition-colors hover:bg-surface-hover"
+          className="focus-ring -mx-2 block w-[calc(100%+1rem)] break-words rounded-md px-2 py-1 text-left transition-colors hover:bg-surface-muted dark:hover:bg-surface-hover"
         >
           {title}
         </button>
@@ -81,8 +83,8 @@ export function TaskTitleEditor({ title, readOnly, onSave }) {
         onBlur={finish}
         className={cn(
           TITLE_CLASSES,
-          'block w-full resize-none rounded-lg border border-brand-500 bg-surface px-2 py-1 shadow-xs',
-          'ring-[3px] ring-brand-500/20 focus:outline-none',
+          'block w-full resize-none rounded-md border border-fg/60 bg-surface px-2 py-1',
+          'ring-2 ring-brand-500/25 focus:outline-none',
         )}
       />
       {changedElsewhere && (
@@ -99,7 +101,7 @@ export function TaskTitleEditor({ title, readOnly, onSave }) {
           ·
         </span>
         <Kbd>Esc</Kbd> to cancel
-        <span className="ml-auto tabular-nums">
+        <span className="ml-auto font-mono text-[11px] tabular-nums">
           {edit.draft.length}/{MAX_TITLE_LENGTH}
         </span>
       </p>

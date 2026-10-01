@@ -1,15 +1,6 @@
 import { useId, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
-import {
-  Check,
-  Info,
-  Mail,
-  Search,
-  ShieldCheck,
-  UserPlus,
-  UserRound,
-  UserSearch,
-} from 'lucide-react';
+import { Info, Search, UserPlus, UserSearch } from 'lucide-react';
 import { getErrorMessage } from '@/api/client';
 import { Avatar, Button, FormField, Input, Modal, Skeleton, Spinner } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
@@ -25,7 +16,6 @@ const MIN_SEARCH_LENGTH = 2;
 const SEARCH_LIMIT = 8;
 const ROLE_OPTIONS = TEAM_ROLES.filter((role) => role.value !== 'owner');
 const MEMBER_ROLE_ONLY = ROLE_OPTIONS.filter((role) => role.value === 'member');
-const ROLE_ICONS = { admin: ShieldCheck, member: UserRound };
 /** Seeded demo accounts, offered as one-click suggestions to whoever explores the demo. */
 const DEMO_EMAILS = ['priya', 'aarav', 'rahul', 'sneha', 'karan'].map(
   (name) => `${name}@example.com`,
@@ -273,13 +263,13 @@ function AddMemberDialog({ team, onClose }) {
 function DemoSuggestions({ emails, onChoose }) {
   return (
     <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-      <span className="mr-0.5 text-xs text-fg-muted">Demo accounts:</span>
+      <span className="eyebrow mr-1">Demo accounts</span>
       {emails.map((email) => (
         <button
           key={email}
           type="button"
           onClick={() => onChoose(email)}
-          className="focus-ring inline-flex h-7 items-center rounded-full border border-line bg-surface-muted px-2.5 text-xs font-medium text-fg-muted transition-colors hover:border-line-strong hover:bg-surface-hover hover:text-fg"
+          className="focus-ring inline-flex h-7 items-center rounded-md border border-line bg-surface px-2 font-mono text-[11px] text-fg-muted transition-colors hover:border-line-strong hover:text-fg"
         >
           {email}
         </button>
@@ -301,7 +291,7 @@ function SearchResults({
 }) {
   if (loading) {
     return (
-      <div className="space-y-1 rounded-xl border border-line p-1.5" aria-hidden="true">
+      <div className="space-y-1 rounded-lg border border-line p-1" aria-hidden="true">
         {[0, 1].map((index) => (
           <div key={index} className="flex items-center gap-3 px-2.5 py-2">
             <Skeleton className="h-8 w-8 rounded-full" />
@@ -319,7 +309,7 @@ function SearchResults({
     return (
       <div
         role="status"
-        className="flex items-start gap-3 rounded-xl border border-dashed border-line-strong px-3.5 py-3 text-sm"
+        className="flex items-start gap-3 rounded-lg border border-dashed border-line-strong px-3.5 py-3 text-sm"
       >
         <UserSearch className="mt-0.5 h-4 w-4 shrink-0 text-fg-subtle" aria-hidden="true" />
         <p className="text-pretty text-fg-muted">
@@ -329,8 +319,9 @@ function SearchResults({
             </>
           ) : typedEmail ? (
             <>
-              No TaskFlow account uses <span className="font-medium text-fg">{typedEmail}</span>{' '}
-              yet. Ask them to sign up first.
+              No TaskFlow account uses{' '}
+              <span className="font-mono text-[13px] text-fg">{typedEmail}</span> yet. Ask them to
+              sign up first.
             </>
           ) : (
             <>
@@ -349,7 +340,7 @@ function SearchResults({
       id={listboxId}
       role="listbox"
       aria-label="Matching people"
-      className="max-h-64 space-y-0.5 overflow-y-auto overscroll-contain rounded-xl border border-line p-1.5"
+      className="max-h-64 space-y-px overflow-y-auto overscroll-contain rounded-lg border border-line p-1"
     >
       {results.map((user) => {
         const active = user._id === activeId;
@@ -363,14 +354,14 @@ function SearchResults({
             onMouseEnter={() => onHover(user._id)}
             onClick={() => onPick(user)}
             className={cn(
-              'flex cursor-pointer items-center gap-3 rounded-lg px-2.5 py-2 transition-colors',
+              'flex cursor-pointer items-center gap-3 rounded-md px-2.5 py-2 transition-colors',
               active ? 'bg-surface-hover' : 'hover:bg-surface-hover',
             )}
           >
             <Avatar user={user} size="md" />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-fg">{user.name}</p>
-              <p className="truncate text-xs text-fg-muted">{user.email}</p>
+              <p className="truncate font-mono text-[11px] text-fg-muted">{user.email}</p>
             </div>
             {user.title && (
               <span className="hidden max-w-[9rem] truncate text-xs text-fg-muted sm:block">
@@ -386,14 +377,11 @@ function SearchResults({
 
 function SelectedUser({ user, onClear }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-brand-200 bg-brand-50/60 p-3 dark:border-brand-500/30 dark:bg-brand-500/10">
+    <div className="flex items-center gap-3 rounded-lg border border-line-strong bg-surface p-3">
       <Avatar user={user} size="lg" />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-fg">{user.name}</p>
-        <p className="flex min-w-0 items-center gap-1.5 text-xs text-fg-muted">
-          <Mail className="h-3.5 w-3.5 shrink-0 text-fg-subtle" aria-hidden="true" />
-          <span className="truncate">{user.email}</span>
-        </p>
+        <p className="truncate font-mono text-[11px] text-fg-muted">{user.email}</p>
       </div>
       <Button variant="ghost" size="sm" onClick={onClear}>
         Change
@@ -402,17 +390,16 @@ function SelectedUser({ user, onClear }) {
   );
 }
 
+/** Radio card: hairline when idle, ink outline and a small radio dot when chosen. */
 function RoleOption({ option, checked, onChange }) {
-  const Icon = ROLE_ICONS[option.value];
-
   return (
     <label
       className={cn(
-        'relative flex cursor-pointer gap-3 rounded-xl border p-3.5 transition-colors duration-150',
-        'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500/60',
+        'relative flex cursor-pointer gap-3 rounded-lg border bg-surface p-3.5 transition-[border-color,box-shadow] duration-150',
+        'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-brand-500 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-surface',
         checked
-          ? 'border-brand-500 bg-brand-50/60 dark:border-brand-400/70 dark:bg-brand-500/10'
-          : 'border-line hover:border-line-strong hover:bg-surface-hover',
+          ? 'border-fg shadow-[inset_0_0_0_1px_rgb(var(--color-fg))]'
+          : 'border-line hover:border-line-strong',
       )}
     >
       <input
@@ -424,28 +411,20 @@ function RoleOption({ option, checked, onChange }) {
         className="sr-only"
       />
       <span
+        aria-hidden="true"
         className={cn(
-          'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
-          checked
-            ? 'bg-brand-600 text-white dark:bg-brand-500'
-            : 'bg-surface-muted text-fg-muted ring-1 ring-inset ring-line',
+          'mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-colors',
+          checked ? 'border-fg' : 'border-line-strong',
         )}
       >
-        <Icon className="h-4 w-4" aria-hidden="true" />
+        {checked && <span className="h-2 w-2 rounded-full bg-brand-500" />}
       </span>
-      <span className="min-w-0 pr-5">
+      <span className="min-w-0">
         <span className="block text-sm font-medium text-fg">{option.label}</span>
         <span className="mt-0.5 block text-xs leading-relaxed text-fg-muted">
           {option.description}
         </span>
       </span>
-      {checked && (
-        <Check
-          className="absolute right-3 top-3 h-4 w-4 text-brand-600 dark:text-brand-300"
-          strokeWidth={2.5}
-          aria-hidden="true"
-        />
-      )}
     </label>
   );
 }

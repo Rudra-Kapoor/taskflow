@@ -17,7 +17,7 @@ export function PageLoader({ label = 'Loading…', className }) {
       )}
     >
       <Spinner size="lg" className="text-brand-500" />
-      <span className="text-sm text-fg-muted">{label}</span>
+      <span className="text-[13px] text-fg-muted">{label}</span>
     </div>
   );
 }

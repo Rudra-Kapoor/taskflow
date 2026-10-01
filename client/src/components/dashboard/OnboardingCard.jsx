@@ -1,23 +1,24 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  Check,
-  FolderPlus,
-  ListTodo,
-  Plus,
-  Sparkles,
-  UserPlus,
-  Users,
-} from 'lucide-react';
+import { ArrowRight, Check, Plus, UserPlus } from 'lucide-react';
 import { ProjectFormModal } from '@/components/projects/ProjectFormModal';
 import { AddMemberModal } from '@/components/teams/AddMemberModal';
 import { TeamFormModal } from '@/components/teams/TeamFormModal';
-import { Badge, Button, ProgressBar, Tooltip } from '@/components/ui';
+import { Button, ProgressBar, Tooltip } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
 import { useManagedTeams } from '@/hooks/pages/useManagedTeams';
 import { cn } from '@/lib/cn';
-import { getFirstName } from '@/lib/format';
+
+/**
+ * Hairlines and padding per step: a single column on phones, 2 x 2 from `sm`, one row of four
+ * from `xl` (outer steps flush with the page edges).
+ */
+const STEP_LAYOUT = [
+  'border-b sm:border-r sm:pr-6 xl:border-b-0',
+  'border-b sm:pl-6 xl:border-b-0 xl:border-r xl:px-6',
+  'border-b sm:border-b-0 sm:border-r sm:pr-6 xl:px-6',
+  'sm:pl-6',
+];
 
 /**
  * First-run guide shown instead of empty stats until the user has a team and a project:
@@ -38,7 +39,6 @@ export function OnboardingCard({ stats }) {
 
   const steps = [
     {
-      icon: Users,
       title: 'Create a team',
       description: 'Teams group the people you work with. You’ll be the owner of yours.',
       state: hasTeam ? 'done' : 'current',
@@ -60,7 +60,6 @@ export function OnboardingCard({ stats }) {
       ),
     },
     {
-      icon: UserPlus,
       title: 'Invite teammates',
       description: 'Add the people you work with, so you can share boards and assign them tasks.',
       state: teamWithPeople ? 'done' : inviteCurrent ? 'current' : 'upcoming',
@@ -88,7 +87,6 @@ export function OnboardingCard({ stats }) {
       ),
     },
     {
-      icon: FolderPlus,
       title: 'Create a project',
       description: 'Give the work a home: a board with To Do, In Progress and Completed.',
       state: hasProject ? 'done' : hasTeam && !inviteCurrent ? 'current' : 'upcoming',
@@ -111,69 +109,53 @@ export function OnboardingCard({ stats }) {
       ),
     },
     {
-      icon: ListTodo,
       title: 'Add tasks',
       description: 'Break the work down, assign teammates and watch the board update live.',
       state: 'upcoming',
-      action: (
-        <p className="text-xs text-fg-muted">Your new board opens right after step 3.</p>
-      ),
+      action: <p className="text-xs text-fg-muted">Your new board opens right after step 03.</p>,
     },
   ];
 
   return (
-    <section
-      aria-labelledby="onboarding-title"
-      className="card relative isolate overflow-hidden p-5 sm:p-8"
-    >
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-50 via-surface to-violet-50 dark:from-brand-500/[0.08] dark:via-surface dark:to-violet-500/[0.08]"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -right-24 -top-28 -z-10 h-80 w-80 rounded-full bg-brand-400/20 blur-3xl dark:bg-brand-500/15"
-      />
-
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-        <div className="max-w-xl">
-          <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-violet-600 text-white shadow-md shadow-brand-600/30">
-            <Sparkles className="h-5 w-5" aria-hidden="true" />
-          </span>
+    <section aria-labelledby="onboarding-title">
+      <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0 max-w-xl">
           <h2
             id="onboarding-title"
-            className="mt-5 text-xl font-semibold tracking-tight text-fg sm:text-2xl"
+            className="text-[15px] font-semibold tracking-[-0.005em] text-fg"
           >
-            Welcome to TaskFlow, {getFirstName(user?.name) || 'there'}!
+            Set up your workspace
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-fg-muted">
-            Let’s set up your workspace. A few quick steps and your team can plan, track and
-            ship together in real time.
+          <p className="mt-1 text-sm leading-relaxed text-fg-muted">
+            Four short steps, and your team can plan, track and ship together in real time.
           </p>
-          <div className="mt-5 flex items-center gap-3">
-            <ProgressBar
-              value={(completed / steps.length) * 100}
-              size="md"
-              className="max-w-[12rem]"
-              label="Setup progress"
-            />
-            <span className="text-xs font-medium text-fg-muted">
-              {completed} of {steps.length} done
-            </span>
-          </div>
         </div>
-        <BoardIllustration className="hidden lg:block" />
+        <div className="flex w-full items-center gap-3 sm:w-56">
+          <ProgressBar
+            value={(completed / steps.length) * 100}
+            className="h-0.5 flex-1"
+            label="Setup progress"
+          />
+          <span className="shrink-0 font-mono text-xs tabular-nums text-fg-muted">
+            <span className="text-fg">{completed}</span>/{steps.length} done
+          </span>
+        </div>
       </div>
 
-      <ol className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <ol className="mt-6 grid border-y border-line sm:grid-cols-2 xl:grid-cols-4">
         {steps.map((step, index) => (
-          <OnboardingStep key={step.title} step={step} number={index + 1} />
+          <OnboardingStep
+            key={step.title}
+            step={step}
+            number={index + 1}
+            className={STEP_LAYOUT[index]}
+          />
         ))}
       </ol>
 
-      <p className="mt-6 text-xs text-fg-muted">
+      <p className="mt-6 text-xs leading-5 text-fg-muted">
         Joining an existing team instead? Ask one of its owners or admins to add you with{' '}
-        <span className="font-medium text-fg">{user?.email}</span>.
+        <span className="font-mono text-fg">{user?.email}</span>.
       </p>
 
       <TeamFormModal open={dialog === 'team'} onClose={() => setDialog(null)} />
@@ -193,104 +175,50 @@ export function OnboardingCard({ stats }) {
   );
 }
 
-function OnboardingStep({ step, number }) {
-  const Icon = step.icon;
+/** One numbered step; the current one carries the vermilion marker on the top rule. */
+function OnboardingStep({ step, number, className }) {
   const isDone = step.state === 'done';
   const isCurrent = step.state === 'current';
 
   return (
-    <li
-      className={cn(
-        'flex flex-col rounded-xl border bg-surface/90 p-5 backdrop-blur-sm transition-shadow',
-        isCurrent
-          ? 'border-brand-300 shadow-lg shadow-brand-600/10 ring-1 ring-brand-500/20 dark:border-brand-400/40'
-          : 'border-line',
+    <li className={cn('relative flex min-w-0 flex-col border-line py-6', className)}>
+      {/* A short tick on phones (one column); the whole column's top rule once steps sit side by side. */}
+      {isCurrent && (
+        <span
+          aria-hidden="true"
+          className="absolute -top-px left-0 h-0.5 w-6 bg-brand-500 sm:right-0 sm:w-auto"
+        />
       )}
-    >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3">
         <span
           className={cn(
-            'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg',
-            isDone && 'bg-emerald-500 text-white',
-            isCurrent && 'bg-brand-600 text-white dark:bg-brand-500',
-            !isDone && !isCurrent && 'bg-surface-muted text-fg-subtle ring-1 ring-inset ring-line',
+            'font-mono text-[13px] tabular-nums',
+            isCurrent ? 'text-brand-700 dark:text-brand-400' : 'text-fg-muted',
           )}
         >
-          {isDone ? (
-            <Check className="h-4 w-4" strokeWidth={3} aria-hidden="true" />
-          ) : (
-            <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
-          )}
-        </span>
-        <span className="text-2xs font-semibold uppercase tracking-wider text-fg-muted">
-          Step {number}
+          <span className="sr-only">Step </span>
+          {String(number).padStart(2, '0')}
         </span>
         {isDone && (
-          <Badge color="green" size="sm" className="ml-auto">
+          <span className="eyebrow inline-flex items-center gap-1.5 text-success">
+            <Check className="h-3.5 w-3.5" aria-hidden="true" />
             Done
-          </Badge>
+          </span>
         )}
-        {isCurrent && (
-          <Badge color="brand" size="sm" className="ml-auto">
-            Up next
-          </Badge>
-        )}
+        {isCurrent && <span className="eyebrow text-brand-700 dark:text-brand-400">Up next</span>}
       </div>
-      <h3 className={cn('mt-4 text-sm font-semibold', isDone ? 'text-fg-muted' : 'text-fg')}>
+      <h3
+        className={cn(
+          'mt-5 text-[15px] font-semibold tracking-[-0.005em]',
+          isDone ? 'text-fg-muted' : 'text-fg',
+        )}
+      >
         {step.title}
       </h3>
-      <p className="mt-1 flex-1 text-sm leading-relaxed text-fg-muted">{step.description}</p>
+      <p className="mt-1.5 flex-1 text-[13px] leading-relaxed text-fg-muted">
+        {step.description}
+      </p>
       <div className="mt-5">{step.action}</div>
     </li>
-  );
-}
-
-const PREVIEW_COLUMNS = [
-  { dot: 'bg-slate-400', cards: [['w-4/5', 'bg-sky-400'], ['w-3/5', 'bg-amber-400']] },
-  { dot: 'bg-blue-500', cards: [['w-2/3', 'bg-rose-400']] },
-  { dot: 'bg-emerald-500', cards: [['w-3/4', 'bg-violet-400'], ['w-1/2', 'bg-emerald-400']] },
-];
-
-/** Decorative mini board (pure markup) hinting at what the user is about to build. */
-function BoardIllustration({ className }) {
-  return (
-    <div
-      aria-hidden="true"
-      className={cn(
-        'w-80 shrink-0 rotate-[-2deg] rounded-2xl border border-line bg-surface/80 p-3 shadow-xl shadow-brand-900/10 backdrop-blur',
-        className,
-      )}
-    >
-      <div className="mb-3 flex items-center gap-2 px-1">
-        <span className="h-3 w-3 rounded bg-brand-500" />
-        <span className="h-2 w-24 rounded-full bg-line-strong" />
-        <span className="ml-auto flex -space-x-1.5">
-          {['#f97316', '#22c55e', '#ec4899'].map((color) => (
-            <span
-              key={color}
-              className="h-4 w-4 rounded-full ring-2 ring-surface"
-              style={{ backgroundColor: color }}
-            />
-          ))}
-        </span>
-      </div>
-      <div className="grid grid-cols-3 gap-2">
-        {PREVIEW_COLUMNS.map((column, columnIndex) => (
-          <div key={columnIndex} className="space-y-2 rounded-xl bg-surface-muted p-2">
-            <span className={cn('block h-1.5 w-1.5 rounded-full', column.dot)} />
-            {column.cards.map(([width, tag], cardIndex) => (
-              <div
-                key={cardIndex}
-                className="space-y-1.5 rounded-lg border border-line bg-surface p-2 shadow-xs"
-              >
-                <span className={cn('block h-1 w-5 rounded-full', tag)} />
-                <span className={cn('block h-1.5 rounded-full bg-line-strong', width)} />
-                <span className="block h-1.5 w-2/5 rounded-full bg-line" />
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
   );
 }

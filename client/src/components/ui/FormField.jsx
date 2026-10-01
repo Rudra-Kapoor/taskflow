@@ -43,10 +43,10 @@ export function FormField({
         {(label || action) && (
           <div className="flex items-center justify-between gap-3">
             {label && (
-              <label htmlFor={id} className="text-[13px] font-medium text-fg">
+              <label htmlFor={id} className="text-[13px] font-medium leading-5 text-fg">
                 {label}
                 {required && (
-                  <span className="ml-0.5 text-rose-500" aria-hidden="true">
+                  <span className="ml-0.5 text-brand-600 dark:text-brand-400" aria-hidden="true">
                     *
                   </span>
                 )}
@@ -61,7 +61,7 @@ export function FormField({
         {error ? (
           <p
             id={messageId}
-            className="flex animate-fade-in items-start gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400"
+            className="flex animate-fade-in items-start gap-1.5 text-xs font-medium text-danger"
           >
             <AlertCircle className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>{error}</span>

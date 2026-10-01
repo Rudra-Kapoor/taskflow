@@ -58,16 +58,16 @@ export function QuickAddTask({ projectId, status, statusLabel, onCreated }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="focus-ring flex h-8 w-full shrink-0 items-center gap-2 rounded-lg px-2 text-[13px] font-medium text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg dark:hover:bg-surface"
+        className="focus-ring flex h-8 w-full shrink-0 items-center gap-2 rounded-md px-2 text-[13px] text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg touch:h-9"
       >
-        <Plus className="h-4 w-4" aria-hidden="true" />
+        <Plus className="h-3.5 w-3.5" aria-hidden="true" />
         Add task
       </button>
     );
   }
 
   return (
-    <div className="animate-fade-in rounded-lg border border-brand-400/70 bg-surface p-2.5 shadow-sm ring-[3px] ring-brand-500/15 dark:bg-surface-hover">
+    <div className="animate-fade-in rounded-lg border border-fg/50 bg-surface p-2.5 ring-2 ring-brand-500/20 dark:bg-surface-hover">
       <textarea
         ref={textareaRef}
         autoFocus

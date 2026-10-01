@@ -1,9 +1,9 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui';
 import { cn } from '@/lib/cn';
-import { pluralize } from '@/lib/format';
+import { formatNumber } from '@/lib/format';
 
-/** "Page 2 of 5 · 93 tasks" with Previous / Next buttons. Hidden when there is nothing to page. */
+/** "Page 2 of 5 · 93 tasks" with Previous / Next. Hidden when there is nothing to page. */
 export function Pagination({ page, totalPages, total, noun = 'item', onPageChange, className }) {
   if (!total) return null;
 
@@ -11,22 +11,25 @@ export function Pagination({ page, totalPages, total, noun = 'item', onPageChang
     <nav
       aria-label="Pagination"
       className={cn(
-        'flex flex-wrap items-center justify-between gap-3 border-t border-line px-4 py-3 sm:px-5',
+        'flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-line px-4 py-2.5 sm:px-5',
         className,
       )}
     >
       <p className="text-xs text-fg-muted">
-        Page <span className="font-semibold text-fg">{page}</span> of{' '}
-        <span className="font-semibold text-fg">{Math.max(totalPages, 1)}</span>
-        <span className="mx-1.5 text-fg-subtle" aria-hidden="true">
+        Page <span className="font-mono tabular-nums text-fg">{formatNumber(page)}</span> of{' '}
+        <span className="font-mono tabular-nums text-fg">
+          {formatNumber(Math.max(totalPages, 1))}
+        </span>
+        <span className="mx-2 text-fg-subtle" aria-hidden="true">
           ·
         </span>
-        {pluralize(total, noun)}
+        <span className="font-mono tabular-nums">{formatNumber(total)}</span>{' '}
+        {total === 1 ? noun : `${noun}s`}
       </p>
       {totalPages > 1 && (
-        <div className="flex items-center gap-2">
+        <div className="-mr-2 flex items-center gap-1">
           <Button
-            variant="secondary"
+            variant="ghost"
             size="sm"
             icon={ChevronLeft}
             disabled={page <= 1}
@@ -35,7 +38,7 @@ export function Pagination({ page, totalPages, total, noun = 'item', onPageChang
             Previous
           </Button>
           <Button
-            variant="secondary"
+            variant="ghost"
             size="sm"
             iconRight={ChevronRight}
             disabled={page >= totalPages}

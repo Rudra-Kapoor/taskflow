@@ -37,7 +37,7 @@ export function SearchInput({
   return (
     <div className={cn('group relative', className)}>
       <Search
-        className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-subtle transition-colors group-focus-within:text-brand-500"
+        className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-subtle transition-colors group-focus-within:text-fg"
         aria-hidden="true"
       />
       <input
@@ -66,7 +66,7 @@ export function SearchInput({
             ref.current?.focus();
           }}
           aria-label="Clear search"
-          className="focus-ring absolute right-1.5 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-md text-fg-subtle transition-colors hover:bg-surface-hover hover:text-fg"
+          className="focus-ring absolute right-1.5 top-1/2 inline-flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded text-fg-subtle transition-colors hover:bg-surface-hover hover:text-fg"
         >
           <X className="h-3.5 w-3.5" aria-hidden="true" />
         </button>

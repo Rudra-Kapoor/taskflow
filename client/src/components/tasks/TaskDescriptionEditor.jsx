@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { AlignLeft, ChevronDown, Pencil } from 'lucide-react';
+import { ChevronDown, Pencil } from 'lucide-react';
 import { Button, Kbd } from '@/components/ui';
 import { useAutoResize } from '@/hooks/board/useAutoResize';
 import { useIsTruncated } from '@/hooks/board/useIsTruncated';
@@ -31,12 +31,12 @@ function DescriptionText({ text, onEdit }) {
           onEdit();
         }}
         className={cn(
-          'whitespace-pre-wrap break-words text-sm leading-relaxed text-fg',
+          'whitespace-pre-wrap break-words text-[15px] leading-[1.65] text-fg',
           !expanded && 'max-h-60 overflow-hidden',
           // Fades the last lines out (works on any background, hover included).
           collapsed && '[mask-image:linear-gradient(to_bottom,#000_calc(100%-4rem),transparent)]',
           editable &&
-            'focus-ring -mx-2 cursor-text rounded-lg px-2 py-1.5 transition-colors hover:bg-surface-hover/70',
+            'focus-ring -mx-2 cursor-text rounded-md px-2 py-1.5 transition-colors hover:bg-surface-muted/70 dark:hover:bg-surface-hover/60',
         )}
       >
         {text}
@@ -114,7 +114,7 @@ export function TaskDescriptionEditor({ description, readOnly, onSave }) {
           placeholder="Add a more detailed description…"
           aria-label="Task description"
           aria-describedby={changedElsewhere ? 'task-description-conflict' : undefined}
-          className="input-base min-h-[8rem] resize-none py-2.5 leading-relaxed"
+          className="input-base min-h-[8rem] resize-none py-2.5 text-[15px] leading-[1.65]"
         />
         {changedElsewhere && (
           <p
@@ -135,7 +135,7 @@ export function TaskDescriptionEditor({ description, readOnly, onSave }) {
           <span className="ml-auto flex items-center gap-1 text-xs text-fg-muted">
             <Kbd>{isApplePlatform() ? '⌘' : 'Ctrl'}</Kbd>
             <Kbd>Enter</Kbd>
-            <span className="ml-1 tabular-nums">
+            <span className="ml-1 font-mono text-[11px] tabular-nums">
               {formatNumber(edit.draft.length)}/{formatNumber(MAX_DESCRIPTION_LENGTH)}
             </span>
           </span>
@@ -151,7 +151,7 @@ export function TaskDescriptionEditor({ description, readOnly, onSave }) {
       <button
         type="button"
         onClick={startEditing}
-        className="focus-ring w-full rounded-lg border border-dashed border-line-strong px-3.5 py-3.5 text-left text-sm text-fg-muted transition-colors hover:border-brand-300 hover:bg-surface-hover/50 hover:text-fg dark:hover:border-brand-400/40"
+        className="focus-ring w-full rounded-md border border-dashed border-line-strong px-3.5 py-3.5 text-left text-sm text-fg-muted transition-colors hover:border-fg/40 hover:text-fg"
       >
         Add a more detailed description…
       </button>
@@ -163,9 +163,8 @@ export function TaskDescriptionEditor({ description, readOnly, onSave }) {
       <div className="mb-2 flex h-7 items-center justify-between gap-2">
         <h3
           id="task-description-heading"
-          className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-fg-muted"
+          className="font-mono text-[11px] font-normal uppercase tracking-[0.08em] text-fg-muted"
         >
-          <AlignLeft className="h-3.5 w-3.5" aria-hidden="true" />
           Description
         </h3>
         {!readOnly && !edit && text && (

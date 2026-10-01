@@ -1,22 +1,28 @@
 import { cn } from '@/lib/cn';
-import { PROJECT_COLORS } from '@/lib/constants';
+import { PROJECT_COLORS, calmColor } from '@/lib/constants';
 
 /**
- * Box per size, then the type for keys of up to 3, 4 and 5-6 characters: never below 11px,
- * long keys are set tighter instead so they still fit the square.
+ * Box and colour mark per size, then the mono type for keys of up to 3, 4 and 5-6 characters:
+ * never below 11px, long keys are set tighter instead so they still fit the square.
  */
 const SIZES = {
   md: {
-    box: 'h-10 w-10 rounded-xl',
-    text: ['text-xs tracking-tight', 'text-xs tracking-tight', 'text-[11px] tracking-tighter'],
+    box: 'h-10 w-10 rounded-md',
+    mark: 'left-[5px] top-[5px] h-1.5 w-1.5',
+    text: ['text-xs', 'text-[11px] tracking-[-0.02em]', 'text-[11px] tracking-[-0.08em]'],
   },
   lg: {
-    box: 'h-12 w-12 rounded-xl',
-    text: ['text-sm tracking-tight', 'text-[13px] tracking-tight', 'text-xs tracking-tighter'],
+    box: 'h-12 w-12 rounded-lg',
+    mark: 'left-1.5 top-1.5 h-[7px] w-[7px]',
+    text: ['text-[13px]', 'text-xs tracking-[-0.02em]', 'text-[11px] tracking-[-0.06em]'],
   },
 };
 
-/** Project identity tile: its key in white on the project colour (like a Jira project avatar). */
+/**
+ * Project identity chip: the key in mono ink on a hairline tile, with the project colour (its
+ * calm display tone) as the small square used for projects everywhere else (sidebar,
+ * breadcrumbs, cards). Neutral, so any colour works in both themes.
+ */
 export function ProjectTile({ projectKey, color, size = 'md', className }) {
   const key = (projectKey || '?').toUpperCase();
   const sizing = SIZES[size] ?? SIZES.md;
@@ -25,17 +31,19 @@ export function ProjectTile({ projectKey, color, size = 'md', className }) {
   return (
     <span
       aria-hidden="true"
-      style={{ backgroundColor: color || PROJECT_COLORS[0] }}
       className={cn(
         'relative inline-flex shrink-0 select-none items-center justify-center overflow-hidden',
-        'font-bold text-white shadow-sm',
+        'border border-line-strong bg-surface font-mono font-medium leading-none text-fg',
         sizing.box,
         textSize,
         className,
       )}
     >
-      <span className="absolute inset-0 bg-gradient-to-br from-white/25 via-transparent to-black/20" />
-      <span className="relative">{key}</span>
+      <span
+        className={cn('absolute rounded-[1px]', sizing.mark)}
+        style={{ backgroundColor: calmColor(color || PROJECT_COLORS[0]) }}
+      />
+      {key}
     </span>
   );
 }

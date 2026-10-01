@@ -10,6 +10,9 @@ const OVERLAP = {
   xl: '-space-x-2',
 };
 
+/** Small avatars get a thinner separating ring so it never touches the initials. */
+const THIN_RING = { xs: true, sm: true };
+
 const MORE_SIZES = {
   xs: 'h-5 min-w-5 px-1 text-2xs',
   sm: 'h-6 min-w-6 px-1 text-2xs',
@@ -32,16 +35,18 @@ export function AvatarGroup({ users = [], max = 4, size = 'sm', className }) {
           user={user}
           size={size}
           showTooltip
-          className="ring-2 ring-surface"
+          className={cn('ring-surface', THIN_RING[size] ? 'ring-[1.5px]' : 'ring-2')}
         />
       ))}
       {hidden.length > 0 && (
         <span
           title={hidden.map((user) => user.name).join(', ')}
           className={cn(
-            'relative inline-flex shrink-0 items-center justify-center rounded-full bg-surface-muted',
+            'relative inline-flex shrink-0 items-center justify-center rounded-full',
+            'border border-line bg-surface-muted',
             MORE_SIZES[size] ?? MORE_SIZES.sm,
-            'font-semibold leading-none text-fg-muted ring-2 ring-surface',
+            'font-mono font-medium leading-none tabular-nums text-fg-muted ring-surface',
+            THIN_RING[size] ? 'ring-[1.5px]' : 'ring-2',
           )}
         >
           <span aria-hidden="true">+{hidden.length}</span>

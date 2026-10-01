@@ -32,7 +32,7 @@ export function ProjectGrid({
   );
 
   return (
-    <div className={cn('grid grid-cols-1 gap-4 sm:gap-5', columns ?? DEFAULT_COLUMNS, className)}>
+    <div className={cn('grid grid-cols-1 gap-4', columns ?? DEFAULT_COLUMNS, className)}>
       {loading
         ? Array.from({ length: skeletons }, (_, index) => <ProjectCardSkeleton key={index} />)
         : projects.map((project) => (

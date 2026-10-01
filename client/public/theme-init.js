@@ -6,7 +6,7 @@
  */
 (function applyInitialTheme() {
   var STORAGE_KEY = 'taskflow-theme';
-  var THEME_COLORS = { light: '#ffffff', dark: '#121725' };
+  var THEME_COLORS = { light: '#F5F3EE', dark: '#0F0F0E' };
   var preference = 'system';
 
   try {

@@ -1,5 +1,6 @@
-import { CheckCircle2, GripVertical, MessageSquare } from 'lucide-react';
-import { Avatar, LabelChip, PriorityBadge } from '@/components/ui';
+import { MessageSquare } from 'lucide-react';
+import { CheckGlyph, PriorityGlyph } from '@/components/tasks/TaskGlyphs';
+import { Avatar, LabelChip } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { getTaskKey, pluralize } from '@/lib/format';
 import { DueChip } from './DueChip';
@@ -7,11 +8,12 @@ import { DueChip } from './DueChip';
 const MAX_LABELS = 3;
 
 /**
- * Board card: key + priority, title, labels and a footer with due date, comments and assignee.
- * `draggable` shows a grip on hover / focus; `isDragging` lifts and tilts the card;
- * `highlighted` flashes it after a teammate's change.
+ * Board card: mono key + priority glyph, title, outlined labels and a footer with due date,
+ * comments and assignee. `isDragging` lifts it (ink outline, shadow, slight scale);
+ * `highlighted` flashes it after a teammate's change. The whole card is the drag handle
+ * (BoardCard), so there is no separate grip.
  */
-export function TaskCard({ task, draggable = false, isDragging = false, highlighted = false }) {
+export function TaskCard({ task, isDragging = false, highlighted = false }) {
   const done = task.status === 'completed';
   const labels = task.labels ?? [];
   const hiddenLabels = labels.slice(MAX_LABELS);
@@ -19,49 +21,30 @@ export function TaskCard({ task, draggable = false, isDragging = false, highligh
   return (
     <article
       className={cn(
-        'relative rounded-lg border bg-surface p-3 shadow-xs dark:bg-surface-hover',
-        'transition-[border-color,box-shadow,background-color,transform] duration-200 ease-out',
-        'group-focus-visible:border-brand-500 group-focus-visible:ring-2 group-focus-visible:ring-brand-500',
+        'relative rounded-lg border bg-surface px-3 pb-2.5 pt-2.5 dark:bg-surface-hover',
+        'transition-[border-color,box-shadow,background-color,transform] duration-150 ease-out',
+        'group-focus-visible:ring-2 group-focus-visible:ring-brand-500',
+        'group-focus-visible:ring-offset-2 group-focus-visible:ring-offset-surface-muted',
         isDragging
-          ? 'rotate-[2.5deg] border-brand-300 shadow-xl shadow-slate-900/15 ring-2 ring-brand-500/25 dark:border-brand-400/50 dark:shadow-black/50'
-          : 'border-line hover:border-line-strong hover:shadow-sm',
+          ? 'rotate-[0.6deg] scale-[1.02] border-fg/80 shadow-[0_1px_2px_rgb(0_0_0/0.06),0_14px_32px_-6px_rgb(0_0_0/0.22)] dark:border-fg/60 dark:shadow-[0_14px_32px_-6px_rgb(0_0_0/0.6)]'
+          : 'border-line hover:border-fg/25 dark:hover:border-fg/25',
         highlighted &&
           !isDragging &&
-          'border-brand-300 bg-brand-50/70 ring-2 ring-brand-400/30 dark:border-brand-400/40 dark:bg-brand-500/10',
+          'border-brand-400/70 bg-brand-50 dark:border-brand-400/50 dark:bg-brand-500/10',
       )}
     >
-      {draggable && (
-        <GripVertical
-          aria-hidden="true"
-          className={cn(
-            'absolute left-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-fg-subtle opacity-0',
-            'transition-opacity duration-150 group-hover:opacity-70 group-focus-visible:opacity-70',
-            isDragging && 'opacity-70',
-          )}
-        />
-      )}
-
-      <div className="mb-1.5 flex items-center gap-2">
-        <span className="inline-flex min-w-0 items-center gap-1 font-mono text-[11px] font-medium text-fg-subtle">
-          {done && (
-            <CheckCircle2
-              className="h-3.5 w-3.5 shrink-0 text-emerald-500"
-              aria-label="Completed"
-            />
-          )}
-          <span className="truncate">{getTaskKey(task)}</span>
+      <div className="flex h-4 items-center gap-1.5">
+        {done && <CheckGlyph className="h-3 w-3" />}
+        <span className="truncate font-mono text-[11px] leading-none tracking-[0.02em] text-fg-muted">
+          {getTaskKey(task)}
         </span>
-        <PriorityBadge
-          priority={task.priority}
-          showLabel={false}
-          size="sm"
-          className="ml-auto"
-        />
+        {done && <span className="sr-only">Completed</span>}
+        <PriorityGlyph priority={task.priority} labelled muted={done} className="ml-auto" />
       </div>
 
       <h3
         className={cn(
-          'line-clamp-2 break-words text-sm font-medium leading-snug',
+          'mt-1.5 line-clamp-2 break-words text-sm font-medium leading-[1.4] tracking-[-0.005em]',
           done ? 'text-fg-muted' : 'text-fg',
         )}
       >
@@ -69,14 +52,14 @@ export function TaskCard({ task, draggable = false, isDragging = false, highligh
       </h3>
 
       {labels.length > 0 && (
-        <div className="mt-2.5 flex flex-wrap items-center gap-1">
+        <div className="mt-2 flex flex-wrap items-center gap-1">
           {labels.slice(0, MAX_LABELS).map((label) => (
             <LabelChip key={label} label={label} className="max-w-[9rem]" />
           ))}
           {hiddenLabels.length > 0 && (
             <span
               title={hiddenLabels.join(', ')}
-              className="inline-flex h-5 items-center rounded-md bg-surface-muted px-1.5 text-[11px] font-medium text-fg-muted dark:bg-surface"
+              className="inline-flex h-5 items-center px-1 font-mono text-[11px] text-fg-muted"
             >
               +{hiddenLabels.length}
               <span className="sr-only"> more labels</span>
@@ -85,14 +68,14 @@ export function TaskCard({ task, draggable = false, isDragging = false, highligh
         </div>
       )}
 
-      <div className="mt-3 flex min-h-6 items-center gap-2">
+      <div className="mt-2.5 flex h-6 items-center gap-3">
         <DueChip dueDate={task.dueDate} status={task.status} />
         {task.commentCount > 0 && (
           <span
             title={pluralize(task.commentCount, 'comment')}
-            className="inline-flex items-center gap-1 text-xs font-medium tabular-nums text-fg-muted"
+            className="inline-flex items-center gap-1 font-mono text-[11px] tabular-nums text-fg-muted"
           >
-            <MessageSquare className="h-3.5 w-3.5" aria-hidden="true" />
+            <MessageSquare className="h-3 w-3" strokeWidth={1.75} aria-hidden="true" />
             <span className="sr-only">Comments: </span>
             {task.commentCount}
           </span>

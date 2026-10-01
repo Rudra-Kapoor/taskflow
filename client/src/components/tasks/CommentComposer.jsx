@@ -1,5 +1,4 @@
 import { useRef, useState } from 'react';
-import { SendHorizontal } from 'lucide-react';
 import { Avatar, Button, Kbd } from '@/components/ui';
 import { useAutoResize } from '@/hooks/board/useAutoResize';
 import { isApplePlatform } from '@/lib/dom';
@@ -37,8 +36,8 @@ export function CommentComposer({ user, onSubmit }) {
 
   return (
     <div className="flex gap-3">
-      <Avatar user={user} size="md" className="mt-0.5 hidden xs:inline-flex" />
-      <div className="min-w-0 flex-1 rounded-xl border border-line-strong bg-surface shadow-xs transition-[border-color,box-shadow] duration-150 focus-within:border-brand-500 focus-within:ring-[3px] focus-within:ring-brand-500/20">
+      <Avatar user={user} size="sm" className="mt-2 hidden xs:inline-flex" />
+      <div className="min-w-0 flex-1 rounded-lg border border-line-strong bg-surface transition-[border-color,box-shadow] duration-150 focus-within:border-fg/60 focus-within:ring-2 focus-within:ring-brand-500/20">
         <textarea
           ref={textareaRef}
           rows={2}
@@ -48,17 +47,16 @@ export function CommentComposer({ user, onSubmit }) {
           onKeyDown={handleKeyDown}
           placeholder="Write a comment…"
           aria-label="Write a comment"
-          className="block w-full resize-none rounded-t-xl bg-transparent px-3.5 pt-3 text-sm leading-relaxed text-fg placeholder:text-fg-subtle focus:outline-none"
+          className="block w-full resize-none rounded-t-lg bg-transparent px-3.5 pt-3 text-sm leading-relaxed text-fg placeholder:text-fg-subtle focus:outline-none"
         />
         <div className="flex items-center gap-2 px-2.5 pb-2.5 pt-1">
-          <span className="hidden items-center gap-1 text-2xs text-fg-subtle sm:flex">
+          <span className="hidden items-center gap-1 text-xs text-fg-muted sm:flex">
             <Kbd>{isApplePlatform() ? '⌘' : 'Ctrl'}</Kbd>
             <Kbd>Enter</Kbd>
             <span className="ml-1">to send</span>
           </span>
           <Button
             size="sm"
-            icon={SendHorizontal}
             loading={sending}
             disabled={!trimmed}
             onClick={submit}

@@ -17,7 +17,7 @@ const SIZES = {
 const modalStack = [];
 
 /**
- * Accessible dialog rendered in a portal: overlay blur, Escape / overlay click to close,
+ * Accessible dialog rendered in a portal: ink scrim, Escape / overlay click to close,
  * focus trap + restore, body scroll lock, centred card on desktop and bottom sheet on mobile.
  *
  * Extra props: `hideCloseButton`, `bodyClassName`, `ariaLabel` (accessible name when there is no
@@ -99,7 +99,7 @@ function ModalPanel({
   return (
     <div className="fixed inset-0 z-50">
       <div
-        className="fixed inset-0 animate-fade-in bg-slate-950/50 backdrop-blur-sm"
+        className="fixed inset-0 animate-fade-in bg-[#191814]/40 dark:bg-black/65"
         aria-hidden="true"
       />
       <div
@@ -128,22 +128,25 @@ function ModalPanel({
           onKeyDown={(event) => trapFocus(event, panelRef.current)}
           className={cn(
             'relative flex max-h-[92vh] w-full flex-col overflow-hidden border border-line bg-surface',
-            'rounded-t-2xl shadow-2xl outline-none animate-sheet-up',
-            'sm:max-h-[88vh] sm:rounded-2xl sm:animate-scale-in',
+            'rounded-t-xl shadow-modal outline-none animate-sheet-up dark:border-line-strong',
+            'dark:shadow-black/60 sm:max-h-[88vh] sm:rounded-xl sm:animate-scale-in',
             SIZES[size] ?? SIZES.md,
             className,
           )}
         >
           {hasHeader ? (
-            <div className="flex shrink-0 items-start gap-4 border-b border-line px-5 py-4 sm:px-6">
+            <div className="flex shrink-0 items-start gap-4 border-b border-line px-5 pb-4 pt-5 sm:px-6">
               <div className="min-w-0 flex-1">
                 {title && (
-                  <h2 id={titleId} className="text-base font-semibold tracking-tight text-fg">
+                  <h2
+                    id={titleId}
+                    className="font-display text-[26px] font-normal leading-[1.1] tracking-[-0.005em] text-fg"
+                  >
                     {title}
                   </h2>
                 )}
                 {description && (
-                  <p id={descriptionId} className="mt-1 text-sm text-fg-muted">
+                  <p id={descriptionId} className="mt-1.5 text-[13px] leading-5 text-fg-muted">
                     {description}
                   </p>
                 )}
@@ -155,7 +158,7 @@ function ModalPanel({
                   size="sm"
                   onClick={onClose}
                   data-modal-close=""
-                  className="-mr-2 -mt-1"
+                  className="-mr-2 -mt-1.5"
                 />
               )}
             </div>
@@ -182,7 +185,7 @@ function ModalPanel({
           </div>
 
           {footer && (
-            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-line bg-surface-muted/50 px-5 py-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:px-6 sm:pb-3.5">
+            <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-line bg-canvas/50 px-5 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-6 sm:pb-3">
               {footer}
             </div>
           )}

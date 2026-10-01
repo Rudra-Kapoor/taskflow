@@ -63,7 +63,12 @@ export function TeamActions({ team, onExit }) {
           </DropdownItem>
         </DropdownMenu>
       ) : (
-        <Button variant="secondary" icon={LogOut} onClick={() => setDialog('leave')}>
+        <Button
+          variant="secondary"
+          icon={LogOut}
+          onClick={() => setDialog('leave')}
+          className="text-danger hover:text-danger"
+        >
           Leave team
         </Button>
       )}

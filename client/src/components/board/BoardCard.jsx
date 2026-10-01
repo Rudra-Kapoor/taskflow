@@ -38,7 +38,6 @@ export const BoardCard = memo(function BoardCard({
         >
           <TaskCard
             task={task}
-            draggable={!readOnly}
             isDragging={snapshot.isDragging && !snapshot.isDropAnimating}
             highlighted={highlighted}
           />

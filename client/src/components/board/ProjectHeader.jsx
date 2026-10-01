@@ -1,48 +1,41 @@
-import { Fragment, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Archive, Users } from 'lucide-react';
-import { ProjectTile } from '@/components/projects/ProjectTile';
-import { Badge, ProgressBar } from '@/components/ui';
 import { useIsTruncated } from '@/hooks/board/useIsTruncated';
 import { cn } from '@/lib/cn';
 import { PROJECT_COLORS } from '@/lib/constants';
 import { formatNumber } from '@/lib/format';
 import { getId } from '@/lib/ids';
 
-/** Short inline items separated by middle dots (only between items that are present). */
-function DotSeparated({ items }) {
-  return (
-    <span className="inline-flex min-w-0 items-center gap-2">
-      {items.filter(Boolean).map((item, index) => (
-        <Fragment key={item.key}>
-          {index > 0 && (
-            <span aria-hidden="true" className="text-fg-subtle">
-              ·
-            </span>
-          )}
-          {item}
-        </Fragment>
-      ))}
-    </span>
-  );
-}
-
-function Progress({ completed, total, color }) {
+/** Thin inline progress: a hairline track with a vermilion fill and "7/12" in mono. */
+function Progress({ completed, total, archived }) {
   const percent = total ? Math.round((completed / total) * 100) : 0;
   return (
-    <span className="inline-flex items-center gap-2 text-xs">
-      <ProgressBar
-        value={percent}
-        color={color}
-        label={`${percent}% of tasks completed`}
-        className="w-16 sm:w-24"
-      />
-      <span>
-        <span className="font-semibold text-fg">{formatNumber(completed)}</span>/
-        {formatNumber(total)} done
-        <span className="ml-1.5 font-semibold tabular-nums text-fg">{percent}%</span>
-      </span>
-    </span>
+    <div className="mt-4 flex items-center gap-3">
+      <div
+        role="progressbar"
+        aria-valuenow={percent}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${percent}% of tasks completed`}
+        className="h-[3px] w-32 overflow-hidden rounded-full bg-line sm:w-44"
+      >
+        <div
+          className={cn(
+            'h-full rounded-full transition-[width] duration-500 ease-out',
+            archived ? 'bg-fg-subtle' : 'bg-brand-500',
+          )}
+          style={{ width: `${percent}%` }}
+        />
+      </div>
+      <p className="font-mono text-xs tabular-nums text-fg-muted">
+        <span className="text-fg">{formatNumber(completed)}</span>/{formatNumber(total)}
+        <span className="ml-1.5 font-sans">done</span>
+        <span aria-hidden="true" className="mx-1.5 text-fg-subtle">
+          ·
+        </span>
+        {percent}%
+      </p>
+    </div>
   );
 }
 
@@ -53,7 +46,7 @@ function Description({ text }) {
   const truncated = useIsTruncated(textRef, text);
 
   return (
-    <div className="mt-1.5 flex max-w-3xl items-baseline gap-1.5">
+    <div className="mt-2 flex max-w-3xl items-baseline gap-1.5">
       <p
         ref={textRef}
         className={cn(
@@ -78,8 +71,9 @@ function Description({ text }) {
 }
 
 /**
- * Compact board page header: project tile, name, a meta line (team · key · progress) and the
- * description on one line, with slots for live presence and the project actions menu.
+ * Board page header: mono eyebrow (team · key), the project name set in the display serif, one
+ * line of description and the inline progress, with slots on the right for live presence and the
+ * project actions menu.
  */
 export function ProjectHeader({ project, completed, total, presence, actions }) {
   const teamId = getId(project.team);
@@ -87,59 +81,48 @@ export function ProjectHeader({ project, completed, total, presence, actions }) 
   const color = project.color || PROJECT_COLORS[0];
 
   return (
-    <header className="flex items-start gap-3 sm:gap-4">
-      <ProjectTile
-        projectKey={project.key}
-        color={color}
-        className={cn('mt-0.5', archived && 'grayscale')}
-      />
+    <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
       <div className="min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
-              <h1 className="min-w-0 break-words text-xl font-semibold leading-tight tracking-tight text-fg sm:text-2xl">
-                {project.name}
-              </h1>
-              {archived && (
-                <Badge color="yellow" size="sm">
-                  <Archive className="h-3 w-3" aria-hidden="true" />
-                  Archived
-                </Badge>
-              )}
-            </div>
-            {/* The progress wraps below team · key on narrow screens (no dangling separator). */}
-            <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-sm text-fg-muted">
-              <DotSeparated
-                items={[
-                  teamId && (
-                    <Link
-                      key="team"
-                      to={`/teams/${teamId}`}
-                      className="focus-ring inline-flex min-w-0 items-center gap-1.5 rounded font-medium transition-colors hover:text-brand-700 dark:hover:text-brand-300"
-                    >
-                      <Users className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                      <span className="truncate">{project.team?.name ?? 'Team'}</span>
-                    </Link>
-                  ),
-                  <span key="key" className="font-mono text-xs">
-                    {project.key}
-                  </span>,
-                ]}
-              />
-              <Progress completed={completed} total={total} color={color} />
-            </div>
-          </div>
-          {(presence || actions) && (
-            <div className="flex shrink-0 items-center gap-2">
-              {presence}
-              {actions}
-            </div>
+        <p className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] uppercase leading-4 tracking-[0.08em] text-fg-muted">
+          <span
+            aria-hidden="true"
+            className={cn('h-2 w-2 shrink-0 rounded-[2px]', archived && 'grayscale')}
+            style={{ backgroundColor: color }}
+          />
+          {teamId && (
+            <>
+              <Link
+                to={`/teams/${teamId}`}
+                className="focus-ring min-w-0 truncate rounded-sm transition-colors hover:text-fg"
+              >
+                {project.team?.name ?? 'Team'}
+              </Link>
+              <span aria-hidden="true" className="text-fg-subtle">
+                ·
+              </span>
+            </>
           )}
-        </div>
+          <span>{project.key}</span>
+          {archived && (
+            <span className="ml-1 inline-flex h-5 items-center rounded border border-line-strong px-1.5 text-fg-muted">
+              Archived
+            </span>
+          )}
+        </p>
+        <h1 className="mt-2.5 min-w-0 break-words font-display text-[34px] leading-[1.05] tracking-[-0.01em] text-fg sm:text-[40px]">
+          {project.name}
+        </h1>
         {project.description && (
           <Description key={project.description} text={project.description} />
         )}
+        <Progress completed={completed} total={total} archived={archived} />
       </div>
+      {(presence || actions) && (
+        <div className="flex shrink-0 items-center gap-3 sm:pt-0.5">
+          {presence}
+          {actions}
+        </div>
+      )}
     </header>
   );
 }

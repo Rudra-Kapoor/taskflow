@@ -173,8 +173,8 @@ function PopoverPanel({
         ...style,
       }}
       className={cn(
-        'z-[60] animate-dropdown-in rounded-xl border border-line bg-surface shadow-popover outline-none',
-        'dark:shadow-black/50',
+        'z-[60] animate-dropdown-in rounded-lg border border-line bg-surface shadow-popover outline-none',
+        'dark:border-line-strong dark:shadow-black/60',
         className,
       )}
       {...props}

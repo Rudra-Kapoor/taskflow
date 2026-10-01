@@ -20,7 +20,7 @@ export const PasswordInput = forwardRef(function PasswordInput({ icon = Lock, ..
           aria-label={toggleLabel}
           aria-pressed={visible}
           title={toggleLabel}
-          className="focus-ring inline-flex h-7 w-7 items-center justify-center rounded-md text-fg-subtle transition-colors hover:bg-surface-hover hover:text-fg"
+          className="focus-ring inline-flex h-7 w-7 items-center justify-center rounded text-fg-subtle transition-colors hover:bg-surface-hover hover:text-fg"
         >
           <ToggleIcon className="h-4 w-4" aria-hidden="true" />
         </button>

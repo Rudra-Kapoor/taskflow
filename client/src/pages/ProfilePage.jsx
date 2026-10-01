@@ -29,12 +29,14 @@ export function ProfilePage() {
   return (
     <div className="mx-auto w-full max-w-7xl">
       <PageHeader
+        eyebrow="Account"
         icon={UserRound}
         title="Profile & settings"
         description="Manage your personal details, password and appearance."
       />
 
-      <div className="space-y-10">
+      {/* Preferences layout: label column left, controls right, hairlines between sections. */}
+      <div className="border-b border-line">
         <ProfileHeader user={previewUser} />
 
         <SettingsSection

@@ -225,20 +225,36 @@ function ProjectBoard({ project, tasksQuery }) {
   }
 
   return (
-    <div className={`${PAGE_CLASS} gap-5 sm:gap-6`}>
+    <div className={`${PAGE_CLASS} gap-6 sm:gap-8`}>
       <ProjectHeader
         project={project}
         completed={completedCount}
         total={tasks.length}
         presence={<PresenceAvatars viewers={viewers} currentUserId={currentUserId} />}
         actions={
-          canManage && (
-            <ProjectActions
-              project={project}
-              variant="header"
-              taskCount={tasks.length}
-              onDeleted={() => navigate('/projects', { replace: true })}
-            />
+          (canManage || !archived) && (
+            <>
+              {canManage && (
+                <ProjectActions
+                  project={project}
+                  variant="header"
+                  taskCount={tasks.length}
+                  onDeleted={() => navigate('/projects', { replace: true })}
+                />
+              )}
+              {/* Secondary: the top bar already carries the ink "New task" for the whole app. */}
+              {!archived && (
+                <Button
+                  variant="secondary"
+                  icon={Plus}
+                  aria-label="New task"
+                  title="New task (C)"
+                  onClick={() => setCreateStatus('todo')}
+                >
+                  <span className="hidden xs:inline">New task</span>
+                </Button>
+              )}
+            </>
           )
         }
       />
@@ -251,15 +267,23 @@ function ProjectBoard({ project, tasksQuery }) {
         />
       )}
 
-      <div className="flex flex-1 flex-col gap-3 sm:gap-4">
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
-            <BoardFilters
-              filters={filters}
-              onChange={setFilter}
-              members={members}
-              currentUserId={currentUserId}
-              searchInputRef={searchInputRef}
+      <div className="flex flex-1 flex-col gap-4 sm:gap-5">
+        {/* One quiet row from `sm` up (filters, mono count, view + actions); stacked on phones. */}
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-2">
+          <BoardFilters
+            filters={filters}
+            onChange={setFilter}
+            members={members}
+            currentUserId={currentUserId}
+            searchInputRef={searchInputRef}
+          />
+          <div className="flex min-w-0 items-center gap-2 sm:contents">
+            <BoardFilterSummary
+              activeCount={activeCount}
+              shownCount={visibleTasks.length}
+              totalCount={tasks.length}
+              onClear={clearFilters}
+              className="mr-auto sm:ml-2 sm:mr-0"
             />
             <div className="flex shrink-0 items-center gap-2 sm:ml-auto">
               <SegmentedControl
@@ -274,28 +298,12 @@ function ProjectBoard({ project, tasksQuery }) {
                 aria-label="Activity"
                 aria-expanded={activityOpen}
                 onClick={() => setActivityOpen((open) => !open)}
-                className="ml-auto sm:ml-0"
+                className="border-line shadow-none hover:border-line-strong aria-expanded:border-fg/50 aria-expanded:bg-surface-hover"
               >
                 <span className="hidden xs:inline">Activity</span>
               </Button>
-              {!archived && (
-                <Button
-                  icon={Plus}
-                  aria-label="New task"
-                  title="New task (C)"
-                  onClick={() => setCreateStatus('todo')}
-                >
-                  <span className="hidden xs:inline">New task</span>
-                </Button>
-              )}
             </div>
           </div>
-          <BoardFilterSummary
-            activeCount={activeCount}
-            shownCount={visibleTasks.length}
-            totalCount={tasks.length}
-            onClear={clearFilters}
-          />
         </div>
 
         {content}

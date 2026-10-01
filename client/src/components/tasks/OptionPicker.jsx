@@ -191,7 +191,7 @@ export function OptionPicker({
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => choose(option)}
                   className={cn(
-                    'flex min-h-9 cursor-pointer select-none items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-sm text-fg',
+                    'flex min-h-9 cursor-pointer select-none items-center gap-2.5 rounded-md px-2.5 py-1.5 text-sm text-fg',
                     index === activeIndex && 'bg-surface-hover',
                   )}
                 >

@@ -17,10 +17,10 @@ function CommentsSkeleton() {
     <ul className="space-y-5" aria-label="Loading comments">
       {[80, 55].map((width) => (
         <li key={width} className="flex gap-3">
-          <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
+          <Skeleton className="h-6 w-6 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2">
             <Skeleton className="h-3.5 w-32" />
-            <Skeleton className="h-12 rounded-xl" style={{ width: `${width}%` }} />
+            <Skeleton className="h-10 rounded-md" style={{ width: `${width}%` }} />
           </div>
         </li>
       ))}
@@ -105,7 +105,7 @@ export function CommentSection({ taskId, currentUser, canComment, canModerate, a
     );
   } else {
     list = (
-      <ol className="space-y-5">
+      <ol className="space-y-6">
         {comments.map((comment) => {
           const isOwn = comment.author?._id === currentUser?._id;
           return (
@@ -132,7 +132,7 @@ export function CommentSection({ taskId, currentUser, canComment, canModerate, a
         <CommentComposer user={currentUser} onSubmit={handleAdd} />
       ) : (
         archived && (
-          <p className="flex items-center gap-2 rounded-lg border border-line bg-surface-muted/60 px-3.5 py-2.5 text-xs text-fg-muted">
+          <p className="flex items-center gap-2 border-t border-line pt-4 text-xs text-fg-muted">
             <Lock className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             Comments are read-only while the project is archived.
           </p>

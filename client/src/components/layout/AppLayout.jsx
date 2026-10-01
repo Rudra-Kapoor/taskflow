@@ -63,12 +63,12 @@ export function AppLayout({ children }) {
       <a
         href="#main-content"
         onClick={skipToContent}
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-fg focus:shadow-lg focus:ring-2 focus:ring-brand-500"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-[70] focus:rounded-md focus:border focus:border-line focus:bg-surface focus:px-3.5 focus:py-2 focus:text-sm focus:font-medium focus:text-fg focus:shadow-popover focus:outline-none focus:ring-2 focus:ring-brand-500"
       >
         Skip to content
       </a>
 
-      <aside className="hidden w-64 shrink-0 flex-col border-r border-line bg-surface lg:flex">
+      <aside className="hidden w-60 shrink-0 flex-col border-r border-line bg-canvas lg:flex">
         <Sidebar />
       </aside>
 
@@ -153,7 +153,7 @@ function MobileDrawer({ open, onClose, returnFocusRef }) {
   return createPortal(
     <div className="fixed inset-0 z-50 lg:hidden">
       <div
-        className="absolute inset-0 animate-fade-in bg-slate-950/50 backdrop-blur-sm"
+        className="absolute inset-0 animate-fade-in bg-[#191814]/30 dark:bg-black/60"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -164,7 +164,7 @@ function MobileDrawer({ open, onClose, returnFocusRef }) {
         aria-label="Navigation"
         tabIndex={-1}
         onKeyDown={(event) => trapFocus(event, panelRef.current)}
-        className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] animate-slide-in-left flex-col border-r border-line bg-surface shadow-2xl outline-none"
+        className="absolute inset-y-0 left-0 flex w-72 max-w-[85vw] animate-slide-in-left flex-col border-r border-line bg-canvas shadow-[0_0_0_1px_rgb(0_0_0/0.02),0_16px_48px_rgb(0_0_0/0.16)] outline-none dark:shadow-[0_16px_48px_rgb(0_0_0/0.6)]"
       >
         <Sidebar onClose={onClose} />
       </div>

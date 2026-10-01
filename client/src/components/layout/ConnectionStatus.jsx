@@ -6,30 +6,29 @@ import { cn } from '@/lib/cn';
 /** Grace period before a missing connection is reported as "Offline" (initial connect). */
 const CONNECT_GRACE_MS = 2500;
 
+/** Dot colours are the status palette: green (completed), ochre (medium) and stone (to do). */
 const STATES = {
   live: {
     label: 'Live',
     hint: 'Connected: changes from your team appear instantly',
-    pill: 'bg-emerald-50 text-emerald-700 ring-emerald-600/15 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/20',
-    dot: 'bg-emerald-500',
+    dot: 'bg-[#2F8F5B] shadow-[0_0_0_3px_rgb(47_143_91/0.16)] dark:bg-[#3FA56E]',
   },
   connecting: {
     label: 'Connecting',
     hint: 'Connecting to real-time updates…',
-    pill: 'bg-amber-50 text-amber-800 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/20',
-    dot: 'bg-amber-500 animate-pulse',
+    dot: 'bg-[#C9A227] animate-pulse',
   },
   offline: {
     label: 'Offline',
     hint: 'Real-time updates paused. Reconnecting automatically…',
-    pill: 'bg-surface-muted text-fg-muted ring-line',
-    dot: 'bg-slate-400',
+    dot: 'bg-[#8A857A]',
   },
 };
 
 /**
- * "Live" / "Offline" pill reflecting the Socket.IO connection (hover for details). Purely
- * informative: not focusable, and the offline banner announces lasting outages.
+ * "Live" / "Offline" status: a tiny dot and a mono label reflecting the Socket.IO connection
+ * (hover for details). Purely informative: not focusable, and the offline banner announces
+ * lasting outages.
  */
 export function ConnectionStatus({ className }) {
   const { isConnected } = useSocket();
@@ -45,18 +44,11 @@ export function ConnectionStatus({ className }) {
 
   return (
     <Tooltip content={styles.hint} side="bottom" align="end" className={className}>
-      <span
-        className={cn(
-          'inline-flex h-7 cursor-default items-center gap-1.5 rounded-full px-2.5 text-xs font-medium ring-1 ring-inset',
-          styles.pill,
-        )}
-      >
-        <span className="relative flex h-2 w-2" aria-hidden="true">
-          {state === 'live' && (
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
-          )}
-          <span className={cn('relative inline-flex h-2 w-2 rounded-full', styles.dot)} />
-        </span>
+      <span className="inline-flex h-8 cursor-default select-none items-center gap-2 px-1 font-mono text-[11px] uppercase leading-none tracking-[0.08em] text-fg-muted">
+        <span
+          className={cn('inline-flex h-1.5 w-1.5 shrink-0 rounded-full', styles.dot)}
+          aria-hidden="true"
+        />
         <span className="sr-only">Real-time updates: </span>
         {styles.label}
       </span>

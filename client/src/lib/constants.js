@@ -1,38 +1,47 @@
-import { ArrowDown, ArrowUp, CheckCircle2, Circle, Equal, Flame, Timer } from 'lucide-react';
+import {
+  Circle,
+  CircleCheck,
+  Contrast,
+  SignalHigh,
+  SignalLow,
+  SignalMedium,
+  SquareExclamationPoint,
+} from 'lucide-react';
 
 export const APP_NAME = 'TaskFlow';
 
 /**
  * Task statuses in board order.
- * `dot` / `text` are Tailwind classes, `badge` is a <Badge color>, `color` is a hex for charts.
+ * `dot` / `text` are Tailwind classes (dot = small marker, text = text-safe icon / label colour),
+ * `badge` is a <Badge color>, `color` is a hex for charts.
  */
 export const TASK_STATUSES = [
   {
     value: 'todo',
     label: 'To Do',
     icon: Circle,
-    dot: 'bg-slate-400',
+    dot: 'bg-status-todo',
     badge: 'gray',
-    text: 'text-slate-500 dark:text-slate-400',
-    color: '#94a3b8',
+    text: 'text-fg-muted',
+    color: '#8A857A',
   },
   {
     value: 'in_progress',
     label: 'In Progress',
-    icon: Timer,
-    dot: 'bg-blue-500',
+    icon: Contrast,
+    dot: 'bg-status-progress',
     badge: 'blue',
-    text: 'text-blue-600 dark:text-blue-400',
-    color: '#3b82f6',
+    text: 'text-info',
+    color: '#2F6FEB',
   },
   {
     value: 'completed',
     label: 'Completed',
-    icon: CheckCircle2,
-    dot: 'bg-emerald-500',
+    icon: CircleCheck,
+    dot: 'bg-status-done',
     badge: 'green',
-    text: 'text-emerald-600 dark:text-emerald-400',
-    color: '#10b981',
+    text: 'text-success',
+    color: '#2F8F5B',
   },
 ];
 
@@ -42,48 +51,48 @@ export const STATUS_META = Object.fromEntries(
 
 /**
  * Task priorities from lowest to highest.
- * `tile` = soft background + text classes for icon-only chips.
+ * `tile` = classes for the icon-only glyph (no tinted box: just the coloured mark).
  */
 export const TASK_PRIORITIES = [
   {
     value: 'low',
     label: 'Low',
-    icon: ArrowDown,
+    icon: SignalLow,
     badge: 'gray',
-    dot: 'bg-slate-400',
-    text: 'text-slate-500 dark:text-slate-400',
-    tile: 'bg-slate-100 text-slate-600 dark:bg-slate-400/10 dark:text-slate-300',
-    color: '#94a3b8',
+    dot: 'bg-priority-low',
+    text: 'text-fg-muted',
+    tile: 'text-fg-subtle',
+    color: '#8A857A',
   },
   {
     value: 'medium',
     label: 'Medium',
-    icon: Equal,
+    icon: SignalMedium,
     badge: 'yellow',
-    dot: 'bg-amber-400',
-    text: 'text-amber-600 dark:text-amber-400',
-    tile: 'bg-amber-50 text-amber-600 dark:bg-amber-400/10 dark:text-amber-300',
-    color: '#f59e0b',
+    dot: 'bg-priority-medium',
+    text: 'text-warning',
+    tile: 'text-warning',
+    color: '#C9A227',
   },
   {
     value: 'high',
     label: 'High',
-    icon: ArrowUp,
+    icon: SignalHigh,
     badge: 'orange',
-    dot: 'bg-orange-500',
-    text: 'text-orange-600 dark:text-orange-400',
-    tile: 'bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-300',
-    color: '#f97316',
+    dot: 'bg-priority-high',
+    text: 'text-caution',
+    tile: 'text-caution',
+    color: '#E8803A',
   },
   {
     value: 'urgent',
     label: 'Urgent',
-    icon: Flame,
+    icon: SquareExclamationPoint,
     badge: 'red',
-    dot: 'bg-rose-500',
-    text: 'text-rose-600 dark:text-rose-400',
-    tile: 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-300',
-    color: '#f43f5e',
+    dot: 'bg-priority-urgent',
+    text: 'text-danger',
+    tile: 'text-danger',
+    color: '#E5484D',
   },
 ];
 
@@ -165,6 +174,34 @@ export const AVATAR_COLORS = [
   '#3b82f6',
 ];
 
+/**
+ * Calmer display tones for the vivid stored palette (user avatars, optionally project / team
+ * marks): same hue family, deeper and less saturated, white text >= 4.5:1. Stored values are
+ * untouched; use `calmColor()` when painting.
+ */
+export const CALM_COLORS = {
+  '#6366f1': '#4F5B93',
+  '#8b5cf6': '#6B5A8E',
+  '#d946ef': '#8E4F86',
+  '#ec4899': '#A04E6F',
+  '#f43f5e': '#B4453F',
+  '#f97316': '#B05A2A',
+  '#f59e0b': '#8F6A12',
+  '#eab308': '#8A6D14',
+  '#22c55e': '#3F7A55',
+  '#10b981': '#2E7A62',
+  '#14b8a6': '#2F7471',
+  '#06b6d4': '#2F6F86',
+  '#0ea5e9': '#336C99',
+  '#3b82f6': '#3D64A8',
+};
+
+/** Display tone of a stored palette colour (unknown colours are returned unchanged). */
+export function calmColor(hex) {
+  if (typeof hex !== 'string') return hex;
+  return CALM_COLORS[hex.toLowerCase()] ?? hex;
+}
+
 /** Quick due-date filters; values match the API `due` query parameter. */
 export const DUE_FILTERS = [
   { value: '', label: 'Any due date' },
@@ -179,11 +216,11 @@ export const DUE_FILTERS = [
  * 4.5:1 contrast on every surface of both themes.
  */
 export const DUE_TONES = {
-  overdue: { text: 'text-rose-700 dark:text-rose-400', badge: 'red' },
-  today: { text: 'text-amber-700 dark:text-amber-300', badge: 'yellow' },
-  soon: { text: 'text-orange-700 dark:text-orange-300', badge: 'orange' },
+  overdue: { text: 'text-danger', badge: 'red' },
+  today: { text: 'text-warning', badge: 'yellow' },
+  soon: { text: 'text-caution', badge: 'orange' },
   normal: { text: 'text-fg-muted', badge: 'gray' },
-  done: { text: 'text-emerald-700 dark:text-emerald-400', badge: 'green' },
+  done: { text: 'text-success', badge: 'green' },
   none: { text: 'text-fg-subtle', badge: 'gray' },
 };
 

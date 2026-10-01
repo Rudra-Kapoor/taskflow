@@ -5,7 +5,7 @@ import { useMediaQuery } from '@/hooks/useMediaQuery';
 export const THEME_STORAGE_KEY = 'taskflow-theme';
 
 const PREFERENCES = ['light', 'dark', 'system'];
-const THEME_COLORS = { light: '#ffffff', dark: '#121725' };
+const THEME_COLORS = { light: '#F5F3EE', dark: '#0F0F0E' };
 const DARK_SCHEME_QUERY = '(prefers-color-scheme: dark)';
 
 const ThemeContext = createContext(null);

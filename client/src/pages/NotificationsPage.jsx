@@ -141,14 +141,21 @@ export function NotificationsPage() {
       );
   } else {
     content = (
-      <div className="space-y-5 p-2 sm:p-3">
-        {groups.map((group) => (
-          <section key={group.key} aria-label={group.label}>
-            <h2 className="mb-1.5 flex items-center gap-3 px-2 pt-2 text-2xs font-semibold uppercase tracking-wider text-fg-muted">
+      <div>
+        {groups.map((group, index) => (
+          <section
+            key={group.key}
+            aria-label={group.label}
+            className={cn(index > 0 && 'border-t border-line')}
+          >
+            {/* Day eyebrow, bracketed by hairlines like a section rule, on the avatars' edge. */}
+            <h2 className="eyebrow flex items-baseline justify-between gap-3 border-b border-line pb-2 pl-8 pr-4 pt-4 sm:pr-5">
               {group.label}
-              <span className="h-px flex-1 bg-line" aria-hidden="true" />
+              <span aria-hidden="true" className="tabular-nums text-fg-subtle">
+                {group.items.length}
+              </span>
             </h2>
-            <ul className="space-y-1">
+            <ul className="divide-y divide-line">
               {group.items.map((notification) => (
                 <NotificationRow
                   key={notification._id}
@@ -172,6 +179,7 @@ export function NotificationsPage() {
   return (
     <div className="mx-auto w-full max-w-7xl">
       <PageHeader
+        eyebrow="Inbox"
         icon={Bell}
         title="Notifications"
         description="Assignments, status changes, comments and reminders about your work."
@@ -188,8 +196,8 @@ export function NotificationsPage() {
         }
       />
 
-      <div className="grid items-start gap-6 lg:grid-cols-3">
-        <div className="min-w-0 lg:col-span-2">
+      <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] xl:gap-12">
+        <div className="min-w-0">
           <Tabs
             aria-label="Filter notifications"
             className="mb-5"
@@ -211,6 +219,7 @@ export function NotificationsPage() {
               total={items.length ? total : 0}
               noun="notification"
               onPageChange={(next) => setQuery({ page: next > 1 ? next : null })}
+              className="pl-8 sm:pl-8"
             />
           </Card>
         </div>
@@ -228,43 +237,38 @@ const TYPE_DESCRIPTIONS = {
   team_member_added: 'You’re added to a team.',
 };
 
-/** Explains what triggers a notification (you never get notified about your own actions). */
+/**
+ * Explains what triggers a notification (you never get notified about your own actions): a quiet
+ * aside set off by a hairline, the type icons doubling as a legend for the badges on avatars.
+ */
 function NotificationGuide() {
   return (
-    <Card
-      as="aside"
+    <aside
       aria-labelledby="notification-guide-title"
-      className="lg:sticky lg:top-0 lg:mt-[3.75rem]"
+      className="border-t border-line pt-6 lg:sticky lg:top-0 lg:mt-[3.75rem] lg:border-l lg:border-t-0 lg:pl-8 lg:pt-1"
     >
       <h2 id="notification-guide-title" className="text-sm font-semibold text-fg">
         What you’re notified about
       </h2>
-      <p className="mt-1 text-xs leading-relaxed text-fg-muted">
+      <p className="mt-1.5 text-[13px] leading-relaxed text-fg-muted">
         Only work that involves you, delivered live. Your own actions never notify you.
       </p>
-      <ul className="mt-5 space-y-4">
+      <ul className="mt-5 divide-y divide-line border-y border-line">
         {Object.entries(TYPE_DESCRIPTIONS).map(([type, description]) => {
           const meta = getNotificationMeta(type);
           const Icon = meta.icon;
           return (
-            <li key={type} className="flex gap-3">
-              <span
-                className={cn(
-                  'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
-                  meta.tile,
-                )}
-              >
-                <Icon className="h-4 w-4" aria-hidden="true" />
-              </span>
+            <li key={type} className="flex gap-3 py-3">
+              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-fg-muted" aria-hidden="true" />
               <div className="min-w-0">
-                <p className="text-sm font-medium text-fg">{meta.label}</p>
+                <p className="text-[13px] font-medium text-fg">{meta.label}</p>
                 <p className="mt-0.5 text-xs leading-relaxed text-fg-muted">{description}</p>
               </div>
             </li>
           );
         })}
       </ul>
-    </Card>
+    </aside>
   );
 }
 
@@ -274,6 +278,9 @@ function NotificationRow({ notification, onOpen, onMarkRead, onDelete }) {
     <li>
       <NotificationItem
         notification={notification}
+        // Full-bleed rows between the list's hairlines; the left padding stays the item's own
+        // (its unread dot hangs in that gutter), the right edge lines up with the day counts.
+        className="rounded-none sm:pr-5"
         onClick={() => onOpen(notification)}
         actions={
           <>
@@ -296,9 +303,12 @@ function NotificationRow({ notification, onOpen, onMarkRead, onDelete }) {
 
 function NotificationsSkeleton() {
   return (
-    <ul className="space-y-1 p-3" aria-label="Loading notifications">
+    <ul className="divide-y divide-line" aria-label="Loading notifications">
+      <li className="pb-2 pl-8 pr-4 pt-4 sm:pr-5" aria-hidden="true">
+        <Skeleton className="h-3 w-16" />
+      </li>
       {Array.from({ length: 6 }, (_, index) => (
-        <li key={index} className="flex gap-3 px-4 py-3.5" aria-hidden="true">
+        <li key={index} className="flex gap-3 py-3.5 pl-8 pr-4 sm:pr-5" aria-hidden="true">
           <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
           <div className="flex-1 space-y-2 pt-0.5">
             <Skeleton className="h-3.5" style={{ width: `${[85, 70, 90, 65, 80, 75][index]}%` }} />

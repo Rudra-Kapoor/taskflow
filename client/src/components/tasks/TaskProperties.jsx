@@ -7,10 +7,12 @@ import { LabelsInput } from './LabelsInput';
 import { PriorityPicker } from './PriorityPicker';
 import { StatusPicker } from './StatusPicker';
 
+const LABEL_CLASSES = 'font-mono text-[11px] uppercase leading-4 tracking-[0.08em] text-fg-muted';
+
 function Property({ label, htmlFor, children }) {
   return (
-    <div className="grid grid-cols-[5.25rem_minmax(0,1fr)] items-start gap-2 py-1">
-      <label htmlFor={htmlFor} className="pt-1.5 text-[13px] text-fg-muted">
+    <div className="grid grid-cols-[5.75rem_minmax(0,1fr)] items-start gap-2 py-2">
+      <label htmlFor={htmlFor} className={`${LABEL_CLASSES} pt-2`}>
         {label}
       </label>
       <div className="min-w-0">{children}</div>
@@ -21,16 +23,16 @@ function Property({ label, htmlFor, children }) {
 function Meta({ label, children }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <dt className="text-fg-subtle">{label}</dt>
-      <dd className="flex min-w-0 items-center gap-1.5 text-right text-fg-muted">{children}</dd>
+      <dt className="text-fg-muted">{label}</dt>
+      <dd className="flex min-w-0 items-center gap-1.5 text-right text-fg">{children}</dd>
     </div>
   );
 }
 
 /**
- * Task detail sidebar: status, priority, assignee, due date and labels, saved through
- * `onSave(data)` as soon as they change (quick successive label edits are batched into one
- * save), followed by creation / update metadata.
+ * Task detail properties: status, priority, assignee, due date and labels as a label / value grid
+ * on hairline rules, saved through `onSave(data)` as soon as they change (quick successive label
+ * edits are batched into one save), followed by creation / update metadata.
  */
 export function TaskProperties({ task, members, membersLoading, currentUserId, readOnly, onSave }) {
   const ids = {
@@ -43,11 +45,9 @@ export function TaskProperties({ task, members, membersLoading, currentUserId, r
   const saveBatched = useBatchedSave(onSave);
 
   return (
-    <div className="rounded-xl border border-line bg-surface-muted/40 p-3 dark:bg-surface-muted/60">
-      <h3 className="px-1 pb-1.5 text-xs font-semibold uppercase tracking-wider text-fg-subtle">
-        Details
-      </h3>
-      <div className="space-y-0.5">
+    <div>
+      <h3 className={`${LABEL_CLASSES} pb-2`}>Details</h3>
+      <div className="divide-y divide-line border-y border-line">
         <Property label="Status" htmlFor={ids.status}>
           <StatusPicker
             id={ids.status}
@@ -100,22 +100,24 @@ export function TaskProperties({ task, members, membersLoading, currentUserId, r
         </Property>
       </div>
 
-      <dl className="mt-3 space-y-2.5 border-t border-line px-1 pt-3.5 text-xs">
+      <dl className="mt-5 space-y-2.5 text-xs">
         <Meta label="Created by">
           <Avatar user={task.createdBy} size="xs" decorative />
-          <span className="truncate font-medium text-fg">{task.createdBy?.name ?? 'Unknown'}</span>
+          <span className="truncate">{task.createdBy?.name ?? 'Unknown'}</span>
         </Meta>
         <Meta label="Created">
-          <span title={formatDateTime(task.createdAt)}>{formatDate(task.createdAt)}</span>
+          <span title={formatDateTime(task.createdAt)} className="font-mono text-[11px] tabular-nums">
+            {formatDate(task.createdAt)}
+          </span>
         </Meta>
         <Meta label="Updated">
-          <TimeAgo date={task.updatedAt} />
+          <TimeAgo date={task.updatedAt} className="text-fg-muted" />
         </Meta>
         {task.completedAt && (
           <Meta label="Completed">
             <span
               title={formatDateTime(task.completedAt)}
-              className="font-medium text-emerald-600 dark:text-emerald-400"
+              className="font-mono text-[11px] tabular-nums text-emerald-700 dark:text-emerald-400"
             >
               {formatDate(task.completedAt)}
             </span>

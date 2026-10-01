@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
-import { ArrowRight, Mail, UserRound } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { applyFieldErrors, getErrorMessage } from '@/api/client';
-import { AuthLayout } from '@/components/layout/AuthLayout';
+import { AuthHeading, AuthLayout, AuthSwitch } from '@/components/layout/AuthLayout';
 import { Alert, Button, FormField, Input, PasswordInput, PasswordStrength } from '@/components/ui';
 import { useAuth } from '@/context/AuthContext';
 import { useDocumentTitle } from '@/hooks/pages/useDocumentTitle';
@@ -61,7 +61,7 @@ export function RegisterPage() {
     setFormError('');
     try {
       const user = await registerAccount(values);
-      toast.success(`Welcome to TaskFlow${user?.name ? `, ${getFirstName(user.name)}` : ''}!`);
+      toast.success(`Welcome to TaskFlow${user?.name ? `, ${getFirstName(user.name)}` : ''}`);
       navigate(redirectTo, { replace: true });
     } catch (error) {
       if (!applyFieldErrors(error, setError)) {
@@ -76,12 +76,11 @@ export function RegisterPage() {
 
   return (
     <AuthLayout>
-      <div className="mb-7">
-        <h1 className="text-2xl font-semibold tracking-tight text-fg">Create your account</h1>
-        <p className="mt-1.5 text-sm text-fg-muted">
-          Start organising your team’s work in under a minute.
-        </p>
-      </div>
+      <AuthHeading
+        eyebrow="Get started"
+        title="Create your account"
+        subtitle="Set up your team’s workspace in under a minute."
+      />
 
       {formError && (
         <Alert variant="error" className="mb-4">
@@ -93,7 +92,6 @@ export function RegisterPage() {
         <FormField label="Full name" htmlFor="register-name" error={errors.name?.message} required>
           <Input
             id="register-name"
-            icon={UserRound}
             autoComplete="name"
             placeholder="Alex Morgan"
             {...register('name')}
@@ -109,28 +107,30 @@ export function RegisterPage() {
           <Input
             id="register-email"
             type="email"
-            icon={Mail}
             autoComplete="email"
             placeholder="you@company.com"
             {...register('email')}
           />
         </FormField>
 
-        <FormField
-          label="Password"
-          htmlFor="register-password"
-          error={errors.password?.message}
-          required
-        >
-          <PasswordInput
-            id="register-password"
-            autoComplete="new-password"
-            placeholder="Create a strong password"
-            {...register('password')}
-          />
-        </FormField>
+        <div className="space-y-3">
+          <FormField
+            label="Password"
+            htmlFor="register-password"
+            error={errors.password?.message}
+            required
+          >
+            <PasswordInput
+              id="register-password"
+              icon={null}
+              autoComplete="new-password"
+              placeholder="Create a strong password"
+              {...register('password')}
+            />
+          </FormField>
 
-        <PasswordStrength password={password} />
+          <PasswordStrength password={password} />
+        </div>
 
         <div className="pt-2">
           <Button
@@ -145,15 +145,9 @@ export function RegisterPage() {
         </div>
       </form>
 
-      <p className="mt-6 text-center text-sm text-fg-muted">
-        Already have an account?{' '}
-        <Link
-          to={loginLink}
-          className="font-semibold text-brand-600 transition-colors hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
-        >
-          Sign in
-        </Link>
-      </p>
+      <AuthSwitch prompt="Already have an account?" to={loginLink}>
+        Sign in
+      </AuthSwitch>
     </AuthLayout>
   );
 }

@@ -162,10 +162,10 @@ export function DropdownItem({
       aria-disabled={disabled || undefined}
       onClick={handleClick}
       className={cn(
-        'group flex h-9 w-full select-none items-center gap-2.5 rounded-lg px-2.5 text-left text-sm',
-        'outline-none transition-colors duration-100',
+        'group flex h-8 w-full select-none items-center gap-2.5 rounded-[5px] px-2 text-left',
+        'text-[13px] outline-none transition-colors duration-100 touch:h-10',
         danger
-          ? 'text-rose-600 hover:bg-rose-50 focus:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10 dark:focus:bg-rose-500/10'
+          ? 'text-danger hover:bg-danger/[0.08] focus:bg-danger/[0.08]'
           : 'text-fg hover:bg-surface-hover focus:bg-surface-hover',
         disabled && 'cursor-not-allowed opacity-50 hover:bg-transparent',
         className,
@@ -189,7 +189,7 @@ export function DropdownItem({
 }
 
 export function DropdownSeparator({ className }) {
-  return <div role="separator" className={cn('-mx-1 my-1 h-px bg-line', className)} />;
+  return <div role="separator" className={cn('-mx-1 my-1 h-px bg-line dark:bg-line-strong', className)} />;
 }
 
 /** Non-interactive heading / info block inside a menu. */
@@ -198,7 +198,7 @@ export function DropdownLabel({ className, children }) {
     <div
       role="presentation"
       className={cn(
-        'px-2.5 pb-1 pt-2 text-2xs font-semibold uppercase tracking-wider text-fg-subtle',
+        'px-2 pb-1 pt-2 font-mono text-[11px] uppercase leading-4 tracking-[0.08em] text-fg-subtle',
         className,
       )}
     >

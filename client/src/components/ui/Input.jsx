@@ -57,7 +57,7 @@ export const Input = forwardRef(function Input(
           <Icon
             className={cn(
               'pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transition-colors',
-              invalid ? 'text-rose-500' : 'text-fg-subtle peer-focus:text-brand-500',
+              invalid ? 'text-danger' : 'text-fg-subtle peer-focus:text-fg',
             )}
             aria-hidden="true"
           />

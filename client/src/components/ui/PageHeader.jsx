@@ -1,25 +1,34 @@
+import { isValidElement } from 'react';
 import { cn } from '@/lib/cn';
 import { renderIcon } from './renderIcon';
 
 /**
- * Page title row: optional icon tile, title, description and right-aligned actions.
+ * Page title block: optional mono `eyebrow`, serif display title, description and right-aligned
+ * actions. `icon`: a ready-made element (e.g. a team avatar) sits beside the title; a lucide
+ * component is drawn small in the eyebrow row (only when there is an eyebrow - no icon tiles).
  * `children` render as an extra row below (filters, tabs, …).
  */
-export function PageHeader({ title, description, actions, icon, className, children }) {
+export function PageHeader({ title, description, actions, icon, eyebrow, className, children }) {
+  const iconElement = isValidElement(icon) ? icon : null;
+
   return (
-    <div className={cn('mb-6 flex flex-col gap-4 sm:mb-8', className)}>
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex min-w-0 items-start gap-3.5">
-          {icon && (
-            <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-line bg-surface text-brand-600 shadow-xs xs:flex dark:text-brand-300">
-              {renderIcon(icon, 'h-5 w-5')}
-            </div>
-          )}
+    <div className={cn('mb-6 flex flex-col gap-5 sm:mb-8', className)}>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex min-w-0 items-center gap-4">
+          {iconElement && <div className="hidden h-11 w-11 shrink-0 xs:flex">{iconElement}</div>}
           <div className="min-w-0">
-            <h1 className="truncate text-xl font-semibold tracking-tight text-fg sm:text-2xl">
-              {title}
-            </h1>
-            {description && <p className="mt-1 text-sm text-fg-muted">{description}</p>}
+            {eyebrow && (
+              <p className="eyebrow mb-2.5 flex items-center gap-1.5">
+                {!iconElement && renderIcon(icon, 'h-3.5 w-3.5 shrink-0')}
+                <span className="truncate">{eyebrow}</span>
+              </p>
+            )}
+            <h1 className="title-display truncate pb-[0.12em]">{title}</h1>
+            {description && (
+              <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-fg-muted">
+                {description}
+              </p>
+            )}
           </div>
         </div>
         {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}

@@ -189,7 +189,11 @@ function TaskFormDialog({ onClose, projectId, defaultStatus, onCreated }) {
     <Modal
       open
       onClose={onClose}
-      title="New task"
+      title={
+        <span className="block font-display text-[28px] font-normal leading-[1.1] tracking-[-0.01em]">
+          New task
+        </span>
+      }
       description={description}
       size="lg"
       dismissible={!isSubmitting}
@@ -264,81 +268,92 @@ function TaskFormDialog({ onClose, projectId, defaultStatus, onCreated }) {
           />
         </FormField>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <FormField label="Status" htmlFor={fieldId('status')}>
-            <Controller
-              name="status"
-              control={control}
-              render={({ field }) => (
-                <StatusPicker id={fieldId('status')} value={field.value} onChange={field.onChange} />
-              )}
-            />
-          </FormField>
-          <FormField label="Priority" htmlFor={fieldId('priority')}>
-            <Controller
-              name="priority"
-              control={control}
-              render={({ field }) => (
-                <PriorityPicker
-                  id={fieldId('priority')}
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-              )}
-            />
-          </FormField>
+        <section
+          aria-labelledby={fieldId('details')}
+          className="space-y-4 border-t border-line pt-5"
+        >
+          <h3
+            id={fieldId('details')}
+            className="font-mono text-[11px] font-normal uppercase tracking-[0.08em] text-fg-muted"
+          >
+            Details
+          </h3>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField label="Status" htmlFor={fieldId('status')}>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <StatusPicker id={fieldId('status')} value={field.value} onChange={field.onChange} />
+                )}
+              />
+            </FormField>
+            <FormField label="Priority" htmlFor={fieldId('priority')}>
+              <Controller
+                name="priority"
+                control={control}
+                render={({ field }) => (
+                  <PriorityPicker
+                    id={fieldId('priority')}
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                )}
+              />
+            </FormField>
+            <FormField
+              label="Assignee"
+              htmlFor={fieldId('assignee')}
+              error={errors.assignee?.message}
+              hint={selectedProjectId ? undefined : 'Pick a project first'}
+            >
+              <Controller
+                name="assignee"
+                control={control}
+                render={({ field }) => (
+                  <AssigneeSelect
+                    id={fieldId('assignee')}
+                    value={field.value}
+                    onChange={field.onChange}
+                    members={members}
+                    currentUserId={user?._id}
+                    loading={projectQuery.isLoading}
+                    disabled={!selectedProjectId}
+                  />
+                )}
+              />
+            </FormField>
+            <FormField label="Due date" htmlFor={fieldId('due')} error={errors.dueDate?.message}>
+              <Controller
+                name="dueDate"
+                control={control}
+                render={({ field }) => (
+                  <DueDatePicker id={fieldId('due')} value={field.value} onChange={field.onChange} />
+                )}
+              />
+            </FormField>
+          </div>
+
           <FormField
-            label="Assignee"
-            htmlFor={fieldId('assignee')}
-            error={errors.assignee?.message}
-            hint={selectedProjectId ? undefined : 'Pick a project first'}
+            label="Labels"
+            htmlFor={fieldId('labels')}
+            error={errors.labels?.message}
+            hint="Press Enter or comma to add a label."
           >
             <Controller
-              name="assignee"
+              name="labels"
               control={control}
               render={({ field }) => (
-                <AssigneeSelect
-                  id={fieldId('assignee')}
+                <LabelsInput
+                  id={fieldId('labels')}
                   value={field.value}
                   onChange={field.onChange}
-                  members={members}
-                  currentUserId={user?._id}
-                  loading={projectQuery.isLoading}
-                  disabled={!selectedProjectId}
+                  placeholder="e.g. frontend, bug"
                 />
               )}
             />
           </FormField>
-          <FormField label="Due date" htmlFor={fieldId('due')} error={errors.dueDate?.message}>
-            <Controller
-              name="dueDate"
-              control={control}
-              render={({ field }) => (
-                <DueDatePicker id={fieldId('due')} value={field.value} onChange={field.onChange} />
-              )}
-            />
-          </FormField>
-        </div>
-
-        <FormField
-          label="Labels"
-          htmlFor={fieldId('labels')}
-          error={errors.labels?.message}
-          hint="Press Enter or comma to add a label."
-        >
-          <Controller
-            name="labels"
-            control={control}
-            render={({ field }) => (
-              <LabelsInput
-                id={fieldId('labels')}
-                value={field.value}
-                onChange={field.onChange}
-                placeholder="e.g. frontend, bug"
-              />
-            )}
-          />
-        </FormField>
+        </section>
       </form>
     </Modal>
   );

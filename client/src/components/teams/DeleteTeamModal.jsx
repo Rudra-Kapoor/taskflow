@@ -67,7 +67,7 @@ function DeleteTeamDialog({ team, onClose, onDeleted }) {
         <FormField
           label={
             <>
-              Type <span className="font-semibold">{team.name}</span> to confirm
+              Type <span className="font-mono text-[12px] font-medium">{team.name}</span> to confirm
             </>
           }
         >

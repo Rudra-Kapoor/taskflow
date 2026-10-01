@@ -1,26 +1,27 @@
 import { AlertCircle, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
+/** Hairline box; the tone shows in the icon and border, the copy stays ink. */
 const VARIANTS = {
   error: {
     icon: AlertCircle,
-    box: 'border-rose-200 bg-rose-50 text-rose-800 dark:border-rose-500/25 dark:bg-rose-500/10 dark:text-rose-200',
-    iconColor: 'text-rose-500 dark:text-rose-400',
+    box: 'border-danger/30 bg-danger/[0.04] dark:bg-danger/[0.06]',
+    iconColor: 'text-danger',
   },
   warning: {
     icon: AlertTriangle,
-    box: 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-500/25 dark:bg-amber-500/10 dark:text-amber-200',
-    iconColor: 'text-amber-500 dark:text-amber-400',
+    box: 'border-warning/35 bg-warning/[0.05] dark:bg-warning/[0.06]',
+    iconColor: 'text-warning',
   },
   success: {
     icon: CheckCircle2,
-    box: 'border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-500/25 dark:bg-emerald-500/10 dark:text-emerald-200',
-    iconColor: 'text-emerald-500 dark:text-emerald-400',
+    box: 'border-success/30 bg-success/[0.04] dark:bg-success/[0.06]',
+    iconColor: 'text-success',
   },
   info: {
     icon: Info,
-    box: 'border-brand-200 bg-brand-50 text-brand-800 dark:border-brand-500/25 dark:bg-brand-500/10 dark:text-brand-200',
-    iconColor: 'text-brand-500 dark:text-brand-400',
+    box: 'border-line-strong bg-surface',
+    iconColor: 'text-fg-muted',
   },
 };
 
@@ -33,15 +34,15 @@ export function Alert({ variant = 'info', title, className, children }) {
     <div
       role={variant === 'error' ? 'alert' : 'status'}
       className={cn(
-        'flex animate-fade-in gap-3 rounded-lg border px-3.5 py-3 text-sm',
+        'flex animate-fade-in gap-2.5 rounded-md border px-3.5 py-3 text-[13px] leading-5 text-fg',
         styles.box,
         className,
       )}
     >
       <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', styles.iconColor)} aria-hidden="true" />
       <div className="min-w-0 flex-1">
-        {title && <p className="font-semibold">{title}</p>}
-        {children && <div className={cn(title && 'mt-0.5 opacity-90')}>{children}</div>}
+        {title && <p className="font-medium">{title}</p>}
+        {children && <div className={cn(title && 'mt-0.5 text-fg-muted')}>{children}</div>}
       </div>
     </div>
   );

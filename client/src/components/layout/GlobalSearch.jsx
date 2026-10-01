@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Kbd, SearchInput } from '@/components/ui';
+import { cn } from '@/lib/cn';
 import { isApplePlatform } from '@/lib/dom';
 
-const SHORTCUT_LABEL = isApplePlatform() ? '⌘' : 'Ctrl';
+const SHORTCUT_LABEL = isApplePlatform() ? '⌘K' : 'Ctrl K';
 
 /**
  * Global task search. Submitting navigates to `/tasks?search=<q>` (keeping the other task filters
@@ -56,9 +57,14 @@ export function GlobalSearch({ className, autoFocus = false, enableShortcut = fa
         onChange={setTerm}
         inputRef={inputRef}
         autoFocus={autoFocus}
-        placeholder="Search tasks…"
+        placeholder="Search tasks"
         aria-label="Search tasks"
         enterKeyHint="search"
+        // Understated: paper-toned until hovered or focused, then a regular field.
+        inputClassName={cn(
+          'h-8 rounded-md border-line bg-surface/50 text-[13px] shadow-none touch:h-10',
+          'hover:border-line-strong focus:bg-surface dark:bg-surface/40 dark:focus:bg-surface',
+        )}
         onKeyDown={(event) => {
           if (event.key === 'Escape' && !term) {
             inputRef.current?.blur();
@@ -67,10 +73,9 @@ export function GlobalSearch({ className, autoFocus = false, enableShortcut = fa
         }}
         trailing={
           enableShortcut && (
-            <>
-              <Kbd>{SHORTCUT_LABEL}</Kbd>
-              <Kbd>K</Kbd>
-            </>
+            <Kbd className="h-[18px] border-line bg-transparent px-1.5 font-mono text-[11px] font-normal text-fg-subtle shadow-none">
+              {SHORTCUT_LABEL}
+            </Kbd>
           )
         }
       />

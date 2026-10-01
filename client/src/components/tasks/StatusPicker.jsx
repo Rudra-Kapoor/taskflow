@@ -1,26 +1,22 @@
 import { ChevronDown } from 'lucide-react';
-import { StatusBadge } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import { STATUS_META, TASK_STATUSES } from '@/lib/constants';
 import { OptionPicker } from './OptionPicker';
 import { PickerTrigger } from './PickerTrigger';
+import { StatusDot, StatusLabel } from './TaskGlyphs';
 
-const STATUS_OPTIONS = TASK_STATUSES.map((status) => {
-  const Icon = status.icon;
-  return {
-    value: status.value,
-    label: status.label,
-    icon: <Icon className={cn('h-4 w-4', status.text)} aria-hidden="true" />,
-  };
-});
+const STATUS_OPTIONS = TASK_STATUSES.map((status) => ({
+  value: status.value,
+  label: status.label,
+  icon: <StatusDot status={status.value} className="mx-1" />,
+}));
 
 /**
  * Task status select. `variant`: `field` (form input), `ghost` (detail sidebar) or `badge`
- * (compact status pill, e.g. in table rows).
+ * (compact dot + label, e.g. in table rows).
  */
 export function StatusPicker({ value, onChange, disabled, variant = 'field', id, className }) {
   const meta = STATUS_META[value] ?? STATUS_META.todo;
-  const Icon = meta.icon;
 
   const trigger =
     variant === 'badge' ? (
@@ -28,11 +24,12 @@ export function StatusPicker({ value, onChange, disabled, variant = 'field', id,
         type="button"
         aria-label={`Status: ${meta.label}. Change status`}
         className={cn(
-          'focus-ring group/status inline-flex items-center gap-0.5 rounded-md disabled:cursor-default',
+          'focus-ring group/status -mx-1.5 inline-flex h-7 items-center gap-1 rounded-md px-1.5 text-[13px] text-fg',
+          'transition-colors hover:bg-surface-hover aria-expanded:bg-surface-hover disabled:cursor-default disabled:hover:bg-transparent',
           className,
         )}
       >
-        <StatusBadge status={meta.value} size="sm" />
+        <StatusLabel status={meta.value} />
         {!disabled && (
           <ChevronDown
             className="h-3.5 w-3.5 text-fg-subtle opacity-0 transition-opacity group-hover/status:opacity-100 group-focus-visible/status:opacity-100"
@@ -42,7 +39,7 @@ export function StatusPicker({ value, onChange, disabled, variant = 'field', id,
       </button>
     ) : (
       <PickerTrigger id={id} variant={variant} className={className}>
-        <Icon className={cn('h-4 w-4 shrink-0', meta.text)} aria-hidden="true" />
+        <StatusDot status={meta.value} className="mx-1" />
         <span className="truncate">{meta.label}</span>
       </PickerTrigger>
     );

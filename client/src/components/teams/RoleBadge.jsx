@@ -1,19 +1,29 @@
-import { Crown, ShieldCheck, UserRound } from 'lucide-react';
-import { Badge } from '@/components/ui';
+import { cn } from '@/lib/cn';
 import { ROLE_META } from '@/lib/constants';
 
-const ROLE_ICONS = { owner: Crown, admin: ShieldCheck, member: UserRound };
+const SIZES = {
+  sm: 'h-5 px-1.5 text-[11px]',
+  md: 'h-6 px-2 text-xs',
+};
 
-/** Team role pill (Owner / Admin / Member) with its icon. */
+/**
+ * Team role as an outlined tag (Owner / Admin / Member). The owner reads in ink, the other roles
+ * in muted text: hierarchy through weight, not colour.
+ */
 export function RoleBadge({ role, size = 'sm', className }) {
   const meta = ROLE_META[role];
   if (!meta) return null;
-  const Icon = ROLE_ICONS[role];
 
   return (
-    <Badge color={meta.badge} size={size} className={className}>
-      <Icon className="h-3 w-3 shrink-0" strokeWidth={2.25} aria-hidden="true" />
+    <span
+      className={cn(
+        'inline-flex max-w-full shrink-0 items-center whitespace-nowrap rounded border font-medium leading-none',
+        role === 'owner' ? 'border-fg/30 text-fg' : 'border-line-strong text-fg-muted',
+        SIZES[size] ?? SIZES.sm,
+        className,
+      )}
+    >
       {meta.label}
-    </Badge>
+    </span>
   );
 }

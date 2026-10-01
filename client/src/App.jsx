@@ -69,9 +69,10 @@ function NotFoundRoute() {
 }
 
 /**
- * Toasts themed with the design tokens (CSS variables follow light / dark mode). They sit at the
- * bottom (right on desktop, centred above the safe area on phones), away from page headers,
- * dialog headers and the activity panel's close button.
+ * Toasts themed with the design tokens (CSS variables follow light / dark mode): a flat surface
+ * with a hairline, the popover shadow and status-coloured icons (green / red, ink spinner). They
+ * sit at the bottom (right on desktop, centred above the safe area on phones), away from page
+ * headers, dialog headers and the activity panel's close button.
  */
 function AppToaster() {
   const isDesktop = useMediaQuery('(min-width: 640px)');
@@ -90,17 +91,19 @@ function AppToaster() {
         style: {
           background: 'rgb(var(--color-surface))',
           color: 'rgb(var(--color-fg))',
-          border: '1px solid rgb(var(--color-line))',
-          borderRadius: '12px',
-          boxShadow: '0 12px 32px -8px rgb(15 23 42 / 0.18), 0 4px 12px -4px rgb(15 23 42 / 0.10)',
-          fontSize: '14px',
+          border: '1px solid rgb(var(--color-line-strong) / 0.7)',
+          borderRadius: '8px',
+          boxShadow: '0 1px 2px rgb(0 0 0 / 0.06), 0 8px 24px rgb(0 0 0 / 0.10)',
+          fontSize: '13px',
           lineHeight: '1.45',
-          padding: '10px 14px',
+          padding: '9px 12px',
           maxWidth: '420px',
         },
-        success: { iconTheme: { primary: '#10b981', secondary: '#ffffff' } },
-        error: { duration: 5000, iconTheme: { primary: '#f43f5e', secondary: '#ffffff' } },
-        loading: { iconTheme: { primary: '#6366f1', secondary: 'rgb(var(--color-line))' } },
+        success: { iconTheme: { primary: '#2F8F5B', secondary: '#ffffff' } },
+        error: { duration: 5000, iconTheme: { primary: '#E5484D', secondary: '#ffffff' } },
+        loading: {
+          iconTheme: { primary: 'rgb(var(--color-fg))', secondary: 'rgb(var(--color-line))' },
+        },
       }}
     />
   );

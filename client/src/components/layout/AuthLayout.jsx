@@ -1,225 +1,333 @@
-import { BellRing, MousePointer2, Radio, SquareKanban } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MousePointer2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 import { Logo } from './Logo';
 import { ThemeToggle } from './ThemeToggle';
 
 const FEATURES = [
-  {
-    icon: SquareKanban,
-    title: 'Drag-and-drop Kanban boards',
-    text: 'Move work from To Do to Done and reorder priorities in a flick.',
-  },
-  {
-    icon: Radio,
-    title: 'Live updates & presence',
-    text: 'See teammates’ changes the instant they happen, and who’s on the board.',
-  },
-  {
-    icon: BellRing,
-    title: 'Activity logs & notifications',
-    text: 'A full history of every change, plus alerts when work lands on your plate.',
-  },
+  { title: 'Kanban boards', text: 'Drag work from To Do to Done, in the order that matters.' },
+  { title: 'Live presence', text: 'Moves, edits and comments land for everyone at once.' },
+  { title: 'Activity log', text: 'Every change on record, and a ping when work is yours.' },
 ];
 
-const STATS = [
-  { value: 'Real-time', label: 'Socket.IO sync' },
-  { value: '3 roles', label: 'Owner · Admin · Member' },
-  { value: 'Light & dark', label: 'Themes built in' },
-];
+const META = 'font-mono text-[11px] uppercase leading-none tracking-[0.08em] text-fg-subtle';
 
-/** Split-screen layout for the sign-in / sign-up pages. */
+/**
+ * Editorial split layout for the sign-in / sign-up pages. Large screens get a paper showcase
+ * (serif headline, numbered features, a miniature board) beside a focused form column; smaller
+ * screens get the form with a compact header. On large screens both columns are exactly one
+ * viewport tall (the form area scrolls on its own if it must), so the header and footer
+ * hairlines always line up across the page.
+ */
 export function AuthLayout({ children }) {
   const year = new Date().getFullYear();
 
   return (
-    <div className="flex min-h-screen bg-surface">
-      <BrandPanel />
+    <div className="flex min-h-screen bg-canvas lg:h-screen lg:overflow-hidden">
+      <Showcase />
 
-      <div className="relative flex min-h-screen min-w-0 flex-1 flex-col">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-[radial-gradient(ellipse_at_top,rgb(99_102_241/0.12),transparent_70%)] lg:hidden"
-        />
-        <header className="relative flex items-center justify-between px-4 py-4 sm:px-8 sm:py-6">
+      <div className="relative flex min-h-screen min-w-0 flex-1 flex-col lg:h-full lg:min-h-0 lg:border-l lg:border-line">
+        {/* On large screens the wordmark lives in the showcase and this row floats over the form
+            column, so short laptop screens keep the whole form in view. */}
+        <header className="flex h-16 shrink-0 items-center justify-between px-5 sm:px-8 lg:absolute lg:inset-x-0 lg:top-0 lg:z-10 lg:h-20 lg:px-10">
           <Logo to="/login" className="lg:invisible" />
           <ThemeToggle />
         </header>
 
-        <main className="relative flex flex-1 items-center justify-center px-4 pb-12 pt-4 sm:px-8">
-          <div className="w-full max-w-sm animate-slide-up">{children}</div>
+        <main className="flex flex-1 flex-col px-5 pb-14 pt-4 sm:px-8 lg:min-h-0 lg:overflow-y-auto lg:py-20 [@media(min-height:761px)_and_(max-height:860px)]:lg:py-10 [@media(max-height:760px)]:lg:py-5">
+          <div className="mx-auto my-auto w-full max-w-[380px] animate-slide-up">{children}</div>
         </main>
 
-        <footer className="relative px-4 pb-6 text-center text-xs text-fg-subtle sm:px-8">
-          © {year} TaskFlow · Plan, track and ship together
+        <footer
+          className={cn(
+            META,
+            'flex h-14 shrink-0 items-center justify-between gap-4 border-t border-line px-5 sm:px-8 lg:px-10',
+          )}
+        >
+          <span>© {year} TaskFlow</span>
+          <span className="lg:hidden">Real-time · Socket.IO</span>
         </footer>
       </div>
     </div>
   );
 }
 
-function BrandPanel() {
+/** Mono eyebrow, serif title and one quiet line: the heading shared by the auth forms. */
+export function AuthHeading({ eyebrow, title, subtitle }) {
   return (
-    <aside className="relative hidden w-1/2 shrink-0 overflow-hidden bg-gradient-to-br from-brand-600 via-violet-600 to-fuchsia-600 text-white lg:sticky lg:top-0 lg:flex lg:h-screen xl:w-[54%]">
-      <div
-        aria-hidden="true"
-        className="bg-dot-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black_35%,transparent_80%)]"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-white/15 blur-3xl"
-      />
-      <div
-        aria-hidden="true"
-        className="absolute -bottom-40 -right-24 h-[30rem] w-[30rem] rounded-full bg-fuchsia-400/30 blur-3xl"
-      />
+    <div className="mb-8 [@media(max-height:760px)]:mb-5">
+      <p className={cn(META, 'text-fg-muted')}>{eyebrow}</p>
+      <h1 className="mt-4 font-display text-[40px] leading-[1.05] tracking-[-0.01em] text-fg">
+        {title}
+      </h1>
+      <p className="mt-2 text-sm text-fg-muted">{subtitle}</p>
+    </div>
+  );
+}
 
-      <div className="relative z-10 mx-auto flex w-full max-w-2xl flex-col justify-between gap-10 p-10 xl:p-14">
-        <Logo variant="inverted" />
+/** Hairline-separated "Already have an account? Sign in" line under an auth form. */
+export function AuthSwitch({ prompt, to, children }) {
+  return (
+    <p className="mt-7 border-t border-line pt-5 text-sm text-fg-muted [@media(max-height:760px)]:mt-5 [@media(max-height:760px)]:pt-4">
+      {prompt}{' '}
+      <Link
+        to={to}
+        className={cn(
+          'focus-ring rounded-sm font-medium underline underline-offset-[3px] transition-colors',
+          'text-brand-700 decoration-brand-700/30 hover:text-brand-800 hover:decoration-brand-800',
+          'dark:text-brand-400 dark:decoration-brand-400/40 dark:hover:text-brand-300',
+          'dark:hover:decoration-brand-300',
+        )}
+      >
+        {children}
+      </Link>
+    </p>
+  );
+}
 
-        <div className="max-w-xl">
-          <h1 className="text-4xl font-semibold leading-[1.1] tracking-tight xl:text-[2.75rem]">
-            Plan, track and ship — together, in real time.
-          </h1>
-          <p className="mt-4 max-w-lg text-base leading-relaxed text-white/75">
-            TaskFlow brings your team’s boards, tasks and conversations into one fast, collaborative
-            workspace.
+/** Left column on large screens: the product story set like a page from a printed brief. */
+function Showcase() {
+  return (
+    <aside
+      aria-label="About TaskFlow"
+      className="hidden h-full w-[56%] shrink-0 flex-col lg:flex xl:w-[58%]"
+    >
+      <header className="flex h-20 shrink-0 items-center px-10 xl:px-16">
+        <Logo to="/login" />
+      </header>
+
+      <div className="flex min-h-0 flex-1 flex-col justify-center overflow-hidden px-10 xl:px-16">
+        <div className="w-full max-w-[44rem] animate-fade-in 2xl:max-w-[48rem]">
+          <h2 className="font-display text-[length:clamp(3rem,min(8.4vh,5.6vw),5.25rem)] leading-[0.94] tracking-[-0.02em] text-fg 2xl:text-[length:clamp(3rem,8.4vh,5.75rem)]">
+            Plan the work.
+            <br />
+            Ship it <em className="italic">together.</em>
+          </h2>
+
+          <p className="mt-[clamp(1rem,2.8vh,1.5rem)] max-w-[30rem] text-[15px] leading-relaxed text-fg-muted">
+            A calm, real-time workspace for small teams. Boards, tasks and conversation in one
+            place, so everyone knows what is next.
           </p>
 
-          <ul className="mt-8 space-y-4">
-            {FEATURES.map(({ icon: Icon, title, text }) => (
-              <li key={title} className="flex items-start gap-3.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/15 ring-1 ring-inset ring-white/25">
-                  <Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+          <ol className="mt-[clamp(1.25rem,3.5vh,2.25rem)] max-w-[40rem] border-b border-line xl:[@media(max-height:819px)]:hidden">
+            {FEATURES.map((feature, index) => (
+              <li
+                key={feature.title}
+                className="grid grid-cols-[2.5rem_1fr] items-baseline gap-y-0.5 border-t border-line py-3 xl:grid-cols-[2.75rem_8.5rem_1fr] xl:py-2.5"
+              >
+                <span aria-hidden="true" className="font-mono text-[11px] tabular-nums text-fg-subtle">
+                  {String(index + 1).padStart(2, '0')}
                 </span>
-                <div>
-                  <p className="text-sm font-semibold">{title}</p>
-                  <p className="mt-0.5 text-sm text-white/70">{text}</p>
-                </div>
+                <span className="text-sm font-medium text-fg">{feature.title}</span>
+                <span className="col-start-2 text-sm text-fg-muted xl:col-start-3">
+                  {feature.text}
+                </span>
               </li>
             ))}
-          </ul>
+          </ol>
 
-          {/* Decorative extras only show when the viewport is tall enough to fit them. */}
-          <KanbanPreview className="mt-10 [@media(max-height:780px)]:hidden" />
+          <BoardPreview className="mt-[clamp(1.25rem,3.5vh,2.25rem)] hidden xl:block xl:[@media(max-height:719px)]:hidden" />
         </div>
-
-        <ul className="grid max-w-xl grid-cols-3 gap-4 border-t border-white/15 pt-6 [@media(max-height:1000px)]:hidden">
-          {STATS.map((stat) => (
-            <li key={stat.value}>
-              <p className="text-lg font-semibold tracking-tight">{stat.value}</p>
-              <p className="mt-0.5 text-xs text-white/65">{stat.label}</p>
-            </li>
-          ))}
-        </ul>
       </div>
+
+      <footer
+        className={cn(
+          META,
+          'flex h-14 shrink-0 items-center justify-between gap-4 border-t border-line px-10 xl:px-16',
+        )}
+      >
+        <span>Real-time · Socket.IO · MongoDB</span>
+        <span className="hidden xl:inline">Boards · Tasks · Teams</span>
+      </footer>
     </aside>
   );
 }
 
-const MOCK_COLUMNS = [
+const PREVIEW_LANES = [
   {
+    status: 'todo',
     title: 'To Do',
-    dot: 'bg-slate-200',
     cards: [
-      { width: 'w-4/5', tag: 'bg-sky-300', priority: 'bg-amber-300', avatar: '#f97316' },
-      { width: 'w-3/5', tag: 'bg-emerald-300', priority: 'bg-slate-300', avatar: '#22c55e' },
+      { id: 'WEB-14', title: 'Audit colour contrast', label: 'design', priority: 2, who: 'SI' },
+      { id: 'WEB-15', title: 'Draft release notes', label: 'docs', priority: 1, who: 'KM' },
     ],
   },
   {
+    status: 'in_progress',
     title: 'In Progress',
-    dot: 'bg-blue-300',
     cards: [
       {
-        width: 'w-2/3',
-        tag: 'bg-rose-300',
-        priority: 'bg-rose-400',
-        avatar: '#ec4899',
-        active: true,
+        id: 'WEB-12',
+        title: 'Onboarding checklist',
+        label: 'frontend',
+        priority: 3,
+        who: 'PP',
+        dragging: true,
       },
-      { width: 'w-1/2', tag: 'bg-violet-300', priority: 'bg-orange-300', avatar: '#06b6d4' },
+      { id: 'WEB-11', title: 'Cache board queries', label: 'api', priority: 2, who: 'AS' },
     ],
   },
   {
+    status: 'completed',
     title: 'Done',
-    dot: 'bg-emerald-300',
-    cards: [{ width: 'w-3/4', tag: 'bg-amber-300', priority: 'bg-slate-300', avatar: '#6366f1' }],
+    dropSlot: true,
+    cards: [{ id: 'WEB-9', title: 'Socket reconnect', label: 'realtime', priority: 1, who: 'RV' }],
   },
 ];
 
-/** Decorative mini board (pure markup) illustrating the product. */
-function KanbanPreview({ className }) {
+const PRIORITY_BARS = [
+  { x: 2, y: 9.5, height: 4 },
+  { x: 6.5, y: 6.5, height: 7 },
+  { x: 11, y: 3.5, height: 10 },
+];
+
+/**
+ * Decorative miniature of the real board (same anatomy as TaskCard: mono key, signal-bar priority,
+ * outlined label, assignee initials), drawn in neutral ink with one vermilion detail: Priya's
+ * live cursor dragging WEB-12 towards Done.
+ */
+function BoardPreview({ className }) {
   return (
     <div
       aria-hidden="true"
-      className={cn(
-        'relative rounded-2xl border border-white/20 bg-white/10 p-4 shadow-2xl shadow-indigo-950/30 backdrop-blur-md',
-        className,
-      )}
+      className={cn('select-none overflow-hidden rounded-xl border border-line bg-surface', className)}
     >
-      <div className="mb-3.5 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="h-3 w-3 rounded bg-white/70" />
-          <span className="h-2 w-28 rounded-full bg-white/60" />
-        </div>
-        <div className="flex items-center gap-2.5">
-          <div className="flex -space-x-1.5">
-            {['#f97316', '#22c55e', '#ec4899'].map((color) => (
-              <span
-                key={color}
-                className="h-5 w-5 rounded-full ring-2 ring-white/40"
-                style={{ backgroundColor: color }}
-              />
-            ))}
-          </div>
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/20 px-2 py-0.5 text-2xs font-semibold text-emerald-50 ring-1 ring-inset ring-emerald-200/40">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-300" />
-            Live
-          </span>
-        </div>
+      <div className="flex h-10 items-center gap-2 border-b border-line px-3.5">
+        <span className="rounded-[4px] border border-line px-1.5 font-mono text-[11px] leading-[18px] text-fg-muted">
+          WEB
+        </span>
+        <span className="text-[13px] font-medium text-fg">Website relaunch</span>
+        <span className="text-[13px] text-fg-subtle">/ Board</span>
+        <span className="ml-auto flex -space-x-[3px]">
+          {['SI', 'AS', 'PP'].map((initials) => (
+            <Initials key={initials} className="h-[22px] w-[22px] ring-2 ring-surface">
+              {initials}
+            </Initials>
+          ))}
+        </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
-        {MOCK_COLUMNS.map((column) => (
-          <div key={column.title} className="rounded-xl bg-white/[0.08] p-2.5">
-            <div className="mb-2.5 flex items-center gap-1.5 text-[11px] font-medium text-white/85">
-              <span className={cn('h-1.5 w-1.5 rounded-full', column.dot)} />
-              {column.title}
-              <span className="ml-auto text-white/50">{column.cards.length}</span>
+      <div className="grid grid-cols-3 gap-2 p-2.5">
+        {PREVIEW_LANES.map((lane) => (
+          <div key={lane.status} className="min-w-0 rounded-lg bg-surface-muted p-1.5 pb-2">
+            <div className="flex h-7 items-center gap-2 px-1.5">
+              <StatusGlyph status={lane.status} />
+              <span className="truncate font-mono text-[11px] uppercase leading-none tracking-[0.08em] text-fg">
+                {lane.title}
+              </span>
+              <span className="ml-auto font-mono text-[11px] leading-none text-fg-subtle">
+                {lane.cards.length}
+              </span>
             </div>
-            <div className="space-y-2">
-              {column.cards.map((card, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    'relative rounded-lg border border-white/20 bg-white/10 p-2.5 backdrop-blur',
-                    card.active &&
-                      'animate-float bg-white/20 shadow-lg shadow-indigo-950/30 ring-1 ring-white/40',
-                  )}
-                >
-                  <span className={cn('block h-1.5 w-7 rounded-full', card.tag)} />
-                  <span className={cn('mt-2 block h-1.5 rounded-full bg-white/70', card.width)} />
-                  <span className="mt-1.5 block h-1.5 w-2/5 rounded-full bg-white/35" />
-                  <div className="mt-3 flex items-center justify-between">
-                    <span className={cn('h-2 w-2 rounded-sm', card.priority)} />
-                    <span
-                      className="h-4 w-4 rounded-full ring-1 ring-white/50"
-                      style={{ backgroundColor: card.avatar }}
-                    />
-                  </div>
-                  {card.active && (
-                    <span className="absolute -bottom-5 -right-3 flex items-center gap-1">
-                      <MousePointer2 className="h-4 w-4 fill-pink-500 text-white" />
-                      <span className="rounded-full bg-pink-600 px-1.5 py-0.5 text-2xs font-semibold leading-none text-white shadow">
-                        Priya
-                      </span>
-                    </span>
-                  )}
-                </div>
+            <div className="mt-1 space-y-1.5">
+              {lane.dropSlot && (
+                <div className="h-[4.125rem] rounded-md border border-dashed border-line-strong" />
+              )}
+              {lane.cards.map((card) => (
+                <PreviewCard key={card.id} card={card} />
               ))}
             </div>
           </div>
         ))}
       </div>
     </div>
+  );
+}
+
+function PreviewCard({ card }) {
+  return (
+    <div
+      className={cn(
+        'relative rounded-md border bg-surface px-2.5 pb-2 pt-2 dark:bg-surface-hover',
+        card.dragging
+          ? 'z-10 rotate-[0.8deg] border-fg/80 shadow-[0_1px_2px_rgb(0_0_0/0.06),0_12px_28px_-6px_rgb(0_0_0/0.22)] dark:border-fg/60 dark:shadow-[0_12px_28px_-6px_rgb(0_0_0/0.6)]'
+          : 'border-line',
+      )}
+    >
+      <div className="flex items-center gap-1.5">
+        <span className="font-mono text-[11px] leading-none text-fg-muted">{card.id}</span>
+        <PriorityBars level={card.priority} />
+      </div>
+      <p className="mt-1.5 truncate text-[13px] font-medium leading-snug text-fg">{card.title}</p>
+      <div className="mt-1.5 flex items-center justify-between gap-2">
+        <span className="truncate rounded-[4px] border border-line px-1.5 text-[11px] leading-[18px] text-fg-muted">
+          {card.label}
+        </span>
+        <Initials className={card.dragging && 'border-fg bg-fg text-canvas'}>{card.who}</Initials>
+      </div>
+
+      {card.dragging && (
+        <span className="absolute -bottom-6 right-6 flex items-start">
+          <MousePointer2 className="h-[18px] w-[18px] fill-brand-500 text-surface" strokeWidth={1.5} />
+          <span className="ml-0.5 mt-3 rounded-[4px] bg-brand-600 px-1.5 py-[3px] text-[11px] font-medium leading-none text-white">
+            Priya
+          </span>
+        </span>
+      )}
+    </div>
+  );
+}
+
+function Initials({ className, children }) {
+  return (
+    <span
+      className={cn(
+        'inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-line-strong',
+        'bg-surface-muted text-[10px] font-semibold leading-none text-fg-muted',
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+/** Neutral status glyphs: hollow ring (to do), half-filled ring (in progress), check (done). */
+function StatusGlyph({ status }) {
+  if (status === 'completed') {
+    return (
+      <svg viewBox="0 0 16 16" className="h-3 w-3 shrink-0" fill="none">
+        <circle cx="8" cy="8" r="7" className="fill-fg" />
+        <path
+          d="M5 8.25 7.1 10.3 11 6.1"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="stroke-surface-muted"
+        />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 16 16" className="h-3 w-3 shrink-0" fill="none">
+      <circle
+        cx="8"
+        cy="8"
+        r="6.25"
+        strokeWidth="1.5"
+        className={status === 'todo' ? 'stroke-fg-subtle' : 'stroke-fg'}
+      />
+      {status === 'in_progress' && <path d="M8 4.25a3.75 3.75 0 0 1 0 7.5z" className="fill-fg" />}
+    </svg>
+  );
+}
+
+/** Same signal bars as the board's priority glyph, in ink. */
+function PriorityBars({ level }) {
+  return (
+    <svg viewBox="0 0 16 16" className="ml-auto h-3.5 w-3.5 shrink-0" fill="none">
+      {PRIORITY_BARS.map((bar, index) => (
+        <rect
+          key={bar.x}
+          x={bar.x}
+          y={bar.y}
+          width="3"
+          height={bar.height}
+          rx="0.9"
+          className={index < level ? 'fill-fg-muted' : 'fill-line-strong'}
+        />
+      ))}
+    </svg>
   );
 }

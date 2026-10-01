@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { cn } from '@/lib/cn';
 
 /**
- * Underline tabs. Tabs: `{ value, label, count?, icon? }`. Arrow keys move between tabs.
+ * Underline tabs (ink indicator, mono counts). Tabs: `{ value, label, count?, icon? }`. Arrow keys move between tabs.
  * Pair panels with `id={`tabpanel-${value}`}` if you need explicit tab/panel wiring.
  */
 export function Tabs({ tabs, value, onChange, className, 'aria-label': ariaLabel }) {
@@ -29,7 +29,7 @@ export function Tabs({ tabs, value, onChange, className, 'aria-label': ariaLabel
       role="tablist"
       aria-label={ariaLabel}
       className={cn(
-        'scrollbar-none flex items-center gap-1 overflow-x-auto border-b border-line',
+        'scrollbar-none flex items-center gap-5 overflow-x-auto border-b border-line',
         className,
       )}
     >
@@ -50,10 +50,10 @@ export function Tabs({ tabs, value, onChange, className, 'aria-label': ariaLabel
             onClick={() => onChange(tab.value)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
-              'focus-ring relative inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-t-md px-3',
+              'focus-ring relative inline-flex h-10 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-t px-0.5',
               // Inset ring: the scrollable tab list would clip one drawn outside the tab.
               'focus-visible:ring-inset focus-visible:ring-offset-0',
-              'text-sm font-medium transition-colors duration-150',
+              'text-[13px] font-medium transition-colors duration-150',
               active ? 'text-fg' : 'text-fg-muted hover:text-fg',
             )}
           >
@@ -62,10 +62,8 @@ export function Tabs({ tabs, value, onChange, className, 'aria-label': ariaLabel
             {hasCount && (
               <span
                 className={cn(
-                  'min-w-[20px] rounded-full px-1.5 py-0.5 text-center text-[11px] font-semibold leading-none tabular-nums',
-                  active
-                    ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300'
-                    : 'bg-surface-muted text-fg-muted',
+                  'font-mono text-[11px] font-normal leading-none tabular-nums',
+                  active ? 'text-fg-muted' : 'text-fg-subtle',
                 )}
               >
                 {tab.count}
@@ -74,8 +72,8 @@ export function Tabs({ tabs, value, onChange, className, 'aria-label': ariaLabel
             <span
               aria-hidden="true"
               className={cn(
-                'absolute inset-x-2 bottom-0 h-0.5 rounded-full transition-colors duration-150',
-                active ? 'bg-brand-600 dark:bg-brand-400' : 'bg-transparent',
+                'absolute inset-x-0 bottom-0 h-0.5 transition-colors duration-150',
+                active ? 'bg-fg' : 'bg-transparent',
               )}
             />
           </button>

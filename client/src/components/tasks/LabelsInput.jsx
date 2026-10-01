@@ -93,9 +93,9 @@ export function LabelsInput({
       onClick={() => inputRef.current?.focus()}
       className={cn(
         'input-base flex min-h-9 cursor-text flex-wrap items-center gap-1 py-1.5',
-        'focus-within:border-brand-500 focus-within:ring-[3px] focus-within:ring-brand-500/20',
+        'focus-within:border-fg/60 focus-within:ring-2 focus-within:ring-brand-500/20',
         variant === 'ghost' &&
-          'border-transparent bg-transparent px-1.5 shadow-none hover:border-transparent hover:bg-surface-hover focus-within:bg-surface focus-within:hover:border-brand-500',
+          'border-transparent bg-transparent px-1.5 shadow-none hover:border-transparent hover:bg-surface-hover focus-within:bg-surface focus-within:hover:border-fg/60',
         className,
       )}
     >

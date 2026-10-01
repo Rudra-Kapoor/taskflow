@@ -1,37 +1,18 @@
 import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import {
-  ArrowLeft,
-  CalendarDays,
-  ChevronRight,
-  Crown,
-  FolderKanban,
-  Plus,
-  SearchX,
-  ShieldAlert,
-  Users,
-} from 'lucide-react';
+import { ArrowLeft, FolderKanban, Plus, SearchX, ShieldAlert } from 'lucide-react';
 import { ProjectFormModal } from '@/components/projects/ProjectFormModal';
 import { ProjectGrid } from '@/components/projects/ProjectGrid';
 import { MembersCard } from '@/components/teams/MembersCard';
-import { RoleBadge } from '@/components/teams/RoleBadge';
 import { TeamActions } from '@/components/teams/TeamActions';
 import { TeamAvatar } from '@/components/teams/TeamAvatar';
-import {
-  Badge,
-  Button,
-  Card,
-  EmptyState,
-  ErrorState,
-  PageHeader,
-  Skeleton,
-} from '@/components/ui';
+import { Button, Card, EmptyState, ErrorState, PageHeader, Skeleton } from '@/components/ui';
 import { useDocumentTitle } from '@/hooks/pages/useDocumentTitle';
 import { useProjects } from '@/hooks/queries/projects';
 import { useTeam } from '@/hooks/queries/teams';
 import { cn } from '@/lib/cn';
-import { MANAGER_ROLES } from '@/lib/constants';
-import { formatDate, pluralize } from '@/lib/format';
+import { MANAGER_ROLES, ROLE_META } from '@/lib/constants';
+import { formatDate } from '@/lib/format';
 import { getId, isObjectId } from '@/lib/ids';
 
 /**
@@ -68,30 +49,43 @@ export function TeamDetailPage() {
   return <TeamDetailSkeleton />;
 }
 
-function PageShell({ teamName, children }) {
+/**
+ * From `sm` up the top bar shows "Teams / <team>"; phones have no room for it there, so the page
+ * starts with a quiet way back instead.
+ */
+function PageShell({ children }) {
   return (
     <div className="mx-auto w-full max-w-7xl">
-      <nav aria-label="Breadcrumb" className="mb-4">
-        <ol className="flex min-w-0 items-center gap-1.5 text-sm text-fg-muted">
-          <li>
-            <Link to="/teams" className="focus-ring rounded transition-colors hover:text-fg">
-              Teams
-            </Link>
-          </li>
-          {teamName && (
-            <>
-              <li aria-hidden="true">
-                <ChevronRight className="h-3.5 w-3.5 text-fg-subtle" />
-              </li>
-              <li aria-current="page" className="min-w-0 truncate font-medium text-fg">
-                {teamName}
-              </li>
-            </>
-          )}
-        </ol>
-      </nav>
+      <p className="-mt-2 mb-3 sm:hidden">
+        <Link
+          to="/teams"
+          className="focus-ring -ml-1.5 inline-flex h-9 items-center gap-1.5 rounded-md px-1.5 text-[13px] text-fg-muted transition-colors hover:text-fg"
+        >
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          All teams
+        </Link>
+      </p>
       {children}
     </div>
+  );
+}
+
+/** Key facts in a row of columns divided by hairlines (a 2 x 2 grid on phones). */
+function TeamFacts({ facts }) {
+  return (
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line pt-5 sm:flex sm:flex-wrap sm:gap-y-4">
+      {facts.map((fact) => (
+        <div
+          key={fact.label}
+          className="min-w-0 sm:border-l sm:border-line sm:px-6 sm:first:border-l-0 sm:first:pl-0"
+        >
+          <dt className="eyebrow">{fact.label}</dt>
+          <dd className={cn('mt-1.5 truncate text-sm text-fg', fact.mono && 'font-mono tabular-nums')}>
+            {fact.value}
+          </dd>
+        </div>
+      ))}
+    </dl>
   );
 }
 
@@ -142,11 +136,18 @@ function TeamDetail({ team }) {
   // Left, deleted or removed: the team page no longer makes sense.
   const exitTeam = useCallback(() => navigate('/teams', { replace: true }), [navigate]);
   const members = team.members ?? [];
+  const facts = [
+    { label: 'Your role', value: ROLE_META[team.myRole]?.label ?? '—' },
+    { label: 'Members', value: members.length, mono: true },
+    team.owner?.name && { label: 'Owner', value: team.owner.name },
+    team.createdAt && { label: 'Created', value: formatDate(team.createdAt), mono: true },
+  ].filter(Boolean);
 
   return (
-    <PageShell teamName={team.name}>
+    <PageShell>
       <PageHeader
-        icon={<TeamAvatar team={team} className="h-full w-full rounded-[10px] shadow-none" />}
+        eyebrow="Team"
+        icon={<TeamAvatar team={team} size="lg" className="h-full w-full" />}
         // Wraps instead of truncating: a long team name is still readable in full.
         title={<span className="block whitespace-normal break-words">{team.name}</span>}
         description={
@@ -154,28 +155,10 @@ function TeamDetail({ team }) {
         }
         actions={<TeamActions team={team} onExit={exitTeam} />}
       >
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-fg-muted">
-          <RoleBadge role={team.myRole} size="md" />
-          <span className="inline-flex items-center gap-1.5">
-            <Users className="h-4 w-4 text-fg-subtle" aria-hidden="true" />
-            {pluralize(members.length, 'member')}
-          </span>
-          {team.owner?.name && (
-            <span className="inline-flex items-center gap-1.5">
-              <Crown className="h-4 w-4 text-fg-subtle" aria-hidden="true" />
-              Owned by {team.owner.name}
-            </span>
-          )}
-          {team.createdAt && (
-            <span className="inline-flex items-center gap-1.5">
-              <CalendarDays className="h-4 w-4 text-fg-subtle" aria-hidden="true" />
-              Created {formatDate(team.createdAt)}
-            </span>
-          )}
-        </div>
+        <TeamFacts facts={facts} />
       </PageHeader>
 
-      <div className="space-y-8">
+      <div className="space-y-10">
         <MembersCard team={team} />
         <TeamProjects team={team} />
       </div>
@@ -233,13 +216,13 @@ function TeamProjects({ team }) {
         <div>
           <h2
             id="team-projects-title"
-            className="flex items-center gap-2 text-base font-semibold text-fg"
+            className="flex items-baseline gap-2 text-[15px] font-semibold tracking-[-0.005em] text-fg"
           >
             Projects
             {data && (
-              <Badge color="gray" size="sm">
+              <span className="font-mono text-xs font-normal tabular-nums text-fg-muted">
                 {projects.length}
-              </Badge>
+              </span>
             )}
           </h2>
           <p className="mt-0.5 text-xs text-fg-muted">
@@ -247,7 +230,7 @@ function TeamProjects({ team }) {
           </p>
         </div>
         {canManage && (
-          <Button size="sm" icon={Plus} onClick={() => setCreateOpen(true)}>
+          <Button variant="secondary" size="sm" icon={Plus} onClick={() => setCreateOpen(true)}>
             New project
           </Button>
         )}
@@ -290,27 +273,33 @@ function TeamUnavailable({ notFound }) {
 function TeamDetailSkeleton() {
   return (
     <div className="mx-auto w-full max-w-7xl" aria-busy="true">
-      <Skeleton className="mb-5 h-4 w-40" />
-      <div className="mb-8 flex items-start gap-3.5">
-        <Skeleton className="h-10 w-10 rounded-xl" />
-        <div className="flex-1 space-y-2.5">
-          <Skeleton className="h-6 w-56" />
+      <div className="flex items-center gap-4">
+        <Skeleton className="hidden h-11 w-11 rounded-lg xs:block" />
+        <div className="flex-1 space-y-3">
+          <Skeleton className="h-9 w-64" />
           <Skeleton className="h-4 w-full max-w-md" />
-          <Skeleton className="h-4 w-72" />
         </div>
+      </div>
+      <div className="mb-8 mt-6 flex gap-12 border-t border-line pt-5">
+        {[0, 1, 2, 3].map((index) => (
+          <div key={index} className="space-y-2">
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-4 w-24" />
+          </div>
+        ))}
       </div>
       <Card padding={false}>
         <div className="border-b border-line p-5">
           <Skeleton className="h-4 w-28" />
         </div>
         {[0, 1, 2, 3].map((index) => (
-          <div key={index} className="flex items-center gap-3 border-b border-line px-5 py-4">
-            <Skeleton className="h-10 w-10 rounded-full" />
+          <div key={index} className="flex items-center gap-3 border-b border-line px-5 py-3.5 last:border-b-0">
+            <Skeleton className="h-8 w-8 rounded-full" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-3.5 w-40" />
               <Skeleton className="h-3 w-56" />
             </div>
-            <Skeleton className="h-6 w-20" />
+            <Skeleton className="h-5 w-16" />
           </div>
         ))}
       </Card>

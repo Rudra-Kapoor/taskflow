@@ -17,8 +17,9 @@ function subscribeToNetwork(onChange) {
 const getBrowserOnline = () => navigator.onLine;
 
 /**
- * Thin amber bar under the top bar once real-time updates have been unavailable for a few
- * seconds (no network, or the server is unreachable). Hides as soon as the connection is live.
+ * Thin paper bar under the top bar (ochre status dot, ink lead-in) once real-time updates have
+ * been unavailable for a few seconds (no network, or the server is unreachable). Hides as soon as
+ * the connection is live.
  */
 export function OfflineBanner() {
   const { isConnected } = useSocket();
@@ -39,11 +40,16 @@ export function OfflineBanner() {
   return (
     <div role="status" aria-live="polite" className="shrink-0">
       {disconnected && noticeDue && (
-        <p className="flex animate-fade-in items-center justify-center gap-2 border-b border-amber-200 bg-amber-50 px-4 py-1.5 text-center text-xs font-medium text-amber-900 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-200">
-          <WifiOff className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+        <p className="flex animate-fade-in items-center justify-center gap-2.5 border-b border-line bg-surface-muted px-4 py-2 text-center text-xs text-fg-muted">
+          <span className="relative flex shrink-0" aria-hidden="true">
+            <WifiOff className="h-3.5 w-3.5 text-fg-muted" strokeWidth={2} />
+            <span className="absolute -right-0.5 -top-0.5 h-1.5 w-1.5 rounded-full bg-[#C9A227] ring-2 ring-surface-muted" />
+          </span>
           <span>
-            {browserOnline ? 'Live updates are paused.' : 'You’re offline.'} Reconnecting
-            automatically; your team’s changes will appear once you’re back.
+            <span className="font-medium text-fg">
+              {browserOnline ? 'Live updates are paused.' : 'You’re offline.'}
+            </span>{' '}
+            Reconnecting automatically; your team’s changes will appear once you’re back.
           </span>
         </p>
       )}

@@ -65,8 +65,8 @@ function TaskDetail({ task, onClose, onDelete }) {
         onClose={onClose}
       />
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20.5rem] lg:grid-rows-[auto_auto_1fr] lg:gap-x-8">
-        <div className="min-w-0 space-y-3 lg:col-start-1">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_19rem] lg:grid-rows-[auto_auto_1fr] lg:gap-x-12 lg:gap-y-9">
+        <div className="min-w-0 space-y-4 lg:col-start-1">
           {archived && (
             <Alert variant="warning">
               This task is read-only because its project is archived.
@@ -82,7 +82,7 @@ function TaskDetail({ task, onClose, onDelete }) {
 
         <aside
           aria-label="Task details"
-          className="lg:sticky lg:top-[3.25rem] lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start"
+          className="lg:sticky lg:top-[4.5rem] lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:self-start"
         >
           <TaskProperties
             task={task}
@@ -111,7 +111,7 @@ function TaskDetail({ task, onClose, onDelete }) {
               { value: 'comments', label: 'Comments', count: task.commentCount ?? 0 },
               { value: 'activity', label: 'Activity' },
             ]}
-            className="mb-5"
+            className="mb-6"
           />
           {tab === 'comments' ? (
             <CommentSection
@@ -211,7 +211,8 @@ export function TaskDetailModal({ taskId, onClose }) {
       size="2xl"
       hideCloseButton
       ariaLabel={task ? `${getTaskKey(task)}: ${task.title}` : 'Loading task'}
-      className="lg:h-auto lg:max-h-[88vh] lg:min-h-[60vh]"
+      className="sm:max-w-[68rem] lg:h-auto lg:max-h-[88vh] lg:min-h-[60vh]"
+      bodyClassName="px-5 pb-8 pt-0 sm:px-8"
     >
       {task ? (
         <TaskDetail task={task} onClose={onClose} onDelete={handleDelete} />

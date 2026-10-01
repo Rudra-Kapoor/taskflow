@@ -29,17 +29,21 @@ export function ErrorState({
         className,
       )}
     >
-      <div
+      <AlertTriangle
+        className={cn('text-danger', compact ? 'mb-2.5 h-4 w-4' : 'mb-3.5 h-5 w-5')}
+        aria-hidden="true"
+      />
+      <h3
         className={cn(
-          'mb-4 flex items-center justify-center rounded-2xl bg-rose-50 text-rose-600 ring-1 ring-inset',
-          'ring-rose-600/10 dark:bg-rose-500/10 dark:text-rose-400 dark:ring-rose-400/20',
-          compact ? 'h-10 w-10' : 'h-12 w-12',
+          'font-display font-normal leading-[1.15] tracking-[-0.005em] text-fg',
+          compact ? 'text-[21px]' : 'text-[26px]',
         )}
       >
-        <AlertTriangle className={compact ? 'h-5 w-5' : 'h-6 w-6'} aria-hidden="true" />
-      </div>
-      <h3 className="text-sm font-semibold text-fg">{title}</h3>
-      <p className="mt-1 max-w-sm text-sm text-fg-muted">{message}</p>
+        {title}
+      </h3>
+      <p className={cn('max-w-sm text-sm text-fg-muted', compact ? 'mt-1' : 'mt-1.5')}>
+        {message}
+      </p>
       {onRetry && (
         <Button variant="secondary" size="sm" icon={RefreshCw} onClick={onRetry} className="mt-5">
           {retryLabel}

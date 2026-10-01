@@ -1,43 +1,44 @@
 import { cn } from '@/lib/cn';
 
+/** Outlined tags: colour lives in a hairline border + text-safe tone, never a tinted fill. */
 const COLORS = {
-  gray: 'bg-slate-100 text-slate-700 ring-slate-500/20 dark:bg-slate-400/10 dark:text-slate-300 dark:ring-slate-400/20',
-  brand:
-    'bg-brand-50 text-brand-700 ring-brand-600/20 dark:bg-brand-500/10 dark:text-brand-300 dark:ring-brand-400/25',
-  blue: 'bg-blue-50 text-blue-700 ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-400/20',
-  green:
-    'bg-emerald-50 text-emerald-700 ring-emerald-600/20 dark:bg-emerald-500/10 dark:text-emerald-300 dark:ring-emerald-400/20',
-  yellow:
-    'bg-amber-50 text-amber-800 ring-amber-600/20 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/20',
-  orange:
-    'bg-orange-50 text-orange-700 ring-orange-600/20 dark:bg-orange-500/10 dark:text-orange-300 dark:ring-orange-400/20',
-  red: 'bg-rose-50 text-rose-700 ring-rose-600/20 dark:bg-rose-500/10 dark:text-rose-300 dark:ring-rose-400/20',
-  purple:
-    'bg-violet-50 text-violet-700 ring-violet-600/20 dark:bg-violet-500/10 dark:text-violet-300 dark:ring-violet-400/20',
+  gray: 'border-line-strong text-fg-muted',
+  brand: 'border-brand-600/35 text-brand-700 dark:border-brand-400/40 dark:text-brand-300',
+  blue: 'border-info/30 text-info',
+  green: 'border-success/30 text-success',
+  yellow: 'border-warning/35 text-warning',
+  orange: 'border-caution/30 text-caution',
+  red: 'border-danger/30 text-danger',
+  // Ink: the strongest neutral (e.g. the team owner).
+  purple: 'border-fg/30 text-fg',
 };
 
 const DOTS = {
-  gray: 'bg-slate-400',
+  gray: 'bg-status-todo',
   brand: 'bg-brand-500',
-  blue: 'bg-blue-500',
-  green: 'bg-emerald-500',
-  yellow: 'bg-amber-500',
-  orange: 'bg-orange-500',
-  red: 'bg-rose-500',
-  purple: 'bg-violet-500',
+  blue: 'bg-status-progress',
+  green: 'bg-status-done',
+  yellow: 'bg-priority-medium',
+  orange: 'bg-priority-high',
+  red: 'bg-priority-urgent',
+  purple: 'bg-fg',
 };
 
 const SIZES = {
-  sm: 'h-5 gap-1 rounded-md px-1.5 text-[11px]',
-  md: 'h-6 gap-1.5 rounded-md px-2 text-xs',
+  sm: 'h-5 gap-1 rounded-sm px-1.5 text-[11px]',
+  md: 'h-[22px] gap-1.5 rounded-sm px-2 text-xs',
 };
 
-/** Soft tinted pill for statuses, roles and counts. */
+/** Small outlined tag for statuses, roles and counts (numbers are set in mono). */
 export function Badge({ color = 'gray', size = 'md', dot = false, className, children, ...props }) {
+  const numeric = typeof children === 'number';
+
   return (
     <span
       className={cn(
-        'inline-flex max-w-full shrink-0 items-center whitespace-nowrap font-medium ring-1 ring-inset',
+        'inline-flex max-w-full shrink-0 items-center whitespace-nowrap border bg-transparent',
+        'font-medium leading-none',
+        numeric && 'font-mono tabular-nums',
         COLORS[color] ?? COLORS.gray,
         SIZES[size] ?? SIZES.md,
         className,

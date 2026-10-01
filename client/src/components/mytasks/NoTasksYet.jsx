@@ -1,14 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  CheckCircle2,
-  FolderKanban,
-  FolderPlus,
-  Layers,
-  ListTodo,
-  Plus,
-  Users,
-} from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { ProjectFormModal } from '@/components/projects/ProjectFormModal';
 import { TeamFormModal } from '@/components/teams/TeamFormModal';
 import { Button, EmptyState } from '@/components/ui';
@@ -33,22 +25,20 @@ export function NoTasksYet({ assignedToMe, projects, onShowAll }) {
   if (projects.length > 0) {
     content = assignedToMe ? (
       <EmptyState
-        icon={CheckCircle2}
         title="You’re all caught up"
         description="No open tasks are assigned to you right now. New assignments show up here as soon as they’re made."
         action={
-          <Button variant="secondary" icon={Layers} onClick={onShowAll}>
+          <Button variant="secondary" onClick={onShowAll}>
             Browse all tasks
           </Button>
         }
       />
     ) : (
       <EmptyState
-        icon={ListTodo}
         title={title}
         description="Your projects don’t have any tasks yet. Open a board to add the first one."
         action={
-          <Button as={Link} to="/projects" variant="secondary" icon={FolderKanban}>
+          <Button as={Link} to="/projects" variant="secondary">
             Go to projects
           </Button>
         }
@@ -57,7 +47,6 @@ export function NoTasksYet({ assignedToMe, projects, onShowAll }) {
   } else if (teams.length === 0) {
     content = (
       <EmptyState
-        icon={Users}
         title={title}
         description="Tasks live in projects, and projects belong to teams. Create a team to get started, or ask a teammate to add you to theirs."
         action={
@@ -71,7 +60,6 @@ export function NoTasksYet({ assignedToMe, projects, onShowAll }) {
     const canCreate = managedTeams.length > 0;
     content = (
       <EmptyState
-        icon={FolderPlus}
         title={title}
         description={
           canCreate

@@ -1,16 +1,28 @@
 import { Link } from 'react-router-dom';
-import { SquareKanban } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 const SIZES = {
-  sm: { tile: 'h-7 w-7 rounded-lg', icon: 'h-4 w-4', text: 'text-[15px]' },
-  md: { tile: 'h-8 w-8 rounded-lg', icon: 'h-[18px] w-[18px]', text: 'text-[17px]' },
-  lg: { tile: 'h-10 w-10 rounded-xl', icon: 'h-5 w-5', text: 'text-xl' },
+  sm: { mark: 'h-4 w-4', text: 'text-[15px]', gap: 'gap-2' },
+  md: { mark: 'h-[18px] w-[18px]', text: 'text-[17px]', gap: 'gap-2' },
+  lg: { mark: 'h-[22px] w-[22px]', text: 'text-[22px]', gap: 'gap-2.5' },
 };
 
 /**
- * TaskFlow brand mark: gradient tile + wordmark.
- * `variant="inverted"` is for coloured backgrounds; pass `to` to make it a home link.
+ * The TaskFlow mark: a vermilion block with its top-right cell lifted out, a task on the move.
+ * Same drawing as public/favicon.svg.
+ */
+function LogoMark({ className }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M4.5 2H10a1.5 1.5 0 0 1 1.5 1.5V7A1.5 1.5 0 0 0 13 8.5h3.5A1.5 1.5 0 0 1 18 10v5.5a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 2 15.5v-11A2.5 2.5 0 0 1 4.5 2Z" />
+      <rect x="13" y="2" width="5" height="5" rx="1.25" />
+    </svg>
+  );
+}
+
+/**
+ * TaskFlow brand: vermilion mark + lowercase "taskflow" wordmark.
+ * `variant="inverted"` is for dark / coloured backgrounds; pass `to` to make it a home link.
  */
 export function Logo({ size = 'md', showText = true, variant = 'default', to, className }) {
   const sizing = SIZES[size] ?? SIZES.md;
@@ -18,30 +30,16 @@ export function Logo({ size = 'md', showText = true, variant = 'default', to, cl
 
   const content = (
     <>
-      <span
-        className={cn(
-          'relative flex shrink-0 items-center justify-center',
-          sizing.tile,
-          inverted
-            ? 'bg-white/15 ring-1 ring-inset ring-white/30 backdrop-blur'
-            : 'bg-gradient-to-br from-brand-500 to-violet-600 shadow-sm shadow-brand-600/30 ring-1 ring-inset ring-white/10',
-        )}
-      >
-        <SquareKanban
-          className={cn('text-white', sizing.icon)}
-          strokeWidth={2.25}
-          aria-hidden="true"
-        />
-      </span>
+      <LogoMark className={cn('shrink-0 text-brand-500', sizing.mark)} />
       {showText && (
         <span
           className={cn(
-            'font-bold tracking-tight',
+            'font-semibold leading-none tracking-[-0.03em]',
             sizing.text,
             inverted ? 'text-white' : 'text-fg',
           )}
         >
-          TaskFlow
+          taskflow
         </span>
       )}
     </>
@@ -52,12 +50,12 @@ export function Logo({ size = 'md', showText = true, variant = 'default', to, cl
       <Link
         to={to}
         aria-label="TaskFlow home"
-        className={cn('focus-ring inline-flex items-center gap-2.5 rounded-lg', className)}
+        className={cn('focus-ring inline-flex items-center rounded-md', sizing.gap, className)}
       >
         {content}
       </Link>
     );
   }
 
-  return <span className={cn('inline-flex items-center gap-2.5', className)}>{content}</span>;
+  return <span className={cn('inline-flex items-center', sizing.gap, className)}>{content}</span>;
 }

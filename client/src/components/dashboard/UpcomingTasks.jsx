@@ -1,12 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
-import { CalendarCheck } from 'lucide-react';
 import { DueLabel } from '@/components/mytasks/DueLabel';
 import { ProjectChip } from '@/components/mytasks/ProjectChip';
-import { EmptyState, PriorityBadge, Skeleton } from '@/components/ui';
+import { PriorityGlyph } from '@/components/tasks/TaskGlyphs';
+import { EmptyState, Skeleton } from '@/components/ui';
 import { getTaskKey } from '@/lib/format';
 import { TASK_LINK_STATE, withTaskParam } from '@/lib/taskLinks';
 
-/** The user's next deadlines; each row opens the task. */
+/**
+ * The user's next deadlines as a ruled list: mono key, priority glyph, title, project and the
+ * due date right-aligned in mono. Each row opens the task.
+ */
 export function UpcomingTasks({ tasks = [] }) {
   const location = useLocation();
 
@@ -14,7 +17,6 @@ export function UpcomingTasks({ tasks = [] }) {
     return (
       <EmptyState
         compact
-        icon={CalendarCheck}
         title="No upcoming deadlines"
         description="You’re all caught up: nothing assigned to you is waiting."
       />
@@ -22,55 +24,59 @@ export function UpcomingTasks({ tasks = [] }) {
   }
 
   return (
-    <ul className="-mx-2 space-y-0.5">
-      {tasks.map((task) => (
-        <li key={task._id}>
-          <Link
-            to={withTaskParam(task._id, location)}
-            state={TASK_LINK_STATE}
-            className="focus-ring group flex items-center gap-3 rounded-lg px-2 py-2.5 transition-colors hover:bg-surface-hover"
-          >
-            <PriorityBadge priority={task.priority} showLabel={false} />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-fg group-hover:text-brand-700 dark:group-hover:text-brand-300">
-                {task.title}
-              </p>
-              <div className="mt-1 flex min-w-0 items-center gap-2">
-                <span className="shrink-0 font-mono text-2xs font-medium text-fg-muted">
-                  {getTaskKey(task)}
+    <ul className="divide-y divide-line">
+      {tasks.map((task) => {
+        const taskKey = getTaskKey(task);
+        return (
+          <li key={task._id}>
+            <Link
+              to={withTaskParam(task._id, location)}
+              state={TASK_LINK_STATE}
+              className="focus-ring group -mx-2 flex items-center gap-3 rounded-md px-2 py-3 transition-colors hover:bg-surface-muted/70 focus-visible:ring-offset-canvas sm:gap-4 dark:hover:bg-surface-hover/50"
+            >
+              <span className="hidden w-16 shrink-0 font-mono text-xs tabular-nums text-fg-muted sm:block">
+                {taskKey}
+              </span>
+              <PriorityGlyph priority={task.priority} labelled />
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-sm font-medium text-fg decoration-line-strong underline-offset-[3px] group-hover:underline">
+                  {task.title}
                 </span>
-                <ProjectChip project={task.project} />
-                {/* Small screens: the due date joins this line so the title keeps its width. */}
-                <DueLabel
-                  dueDate={task.dueDate}
-                  status={task.status}
-                  className="ml-auto shrink-0 sm:hidden"
-                />
-              </div>
-            </div>
-            <DueLabel
-              dueDate={task.dueDate}
-              status={task.status}
-              className="hidden shrink-0 sm:inline-flex"
-            />
-          </Link>
-        </li>
-      ))}
+                {/* Small screens: key and project move under the title so it keeps its width. */}
+                <span className="mt-0.5 flex min-w-0 items-center gap-2 sm:hidden">
+                  <span className="shrink-0 font-mono text-xs tabular-nums text-fg-muted">
+                    {taskKey}
+                  </span>
+                  <ProjectChip project={task.project} />
+                </span>
+              </span>
+              <ProjectChip project={task.project} className="hidden w-36 shrink-0 sm:inline-flex" />
+              <DueLabel
+                dueDate={task.dueDate}
+                status={task.status}
+                className="shrink-0 justify-end sm:w-24"
+              />
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }
 
 export function UpcomingTasksSkeleton({ rows = 5 }) {
   return (
-    <ul className="space-y-4 py-1" aria-hidden="true">
+    <ul className="divide-y divide-line" aria-hidden="true">
       {Array.from({ length: rows }, (_, index) => (
-        <li key={index} className="flex items-center gap-3">
-          <Skeleton className="h-6 w-6 rounded-md" />
-          <div className="flex-1 space-y-2">
-            <Skeleton className="h-3.5" style={{ width: `${[70, 55, 80, 60, 65][index % 5]}%` }} />
-            <Skeleton className="h-3 w-40" />
-          </div>
-          <Skeleton className="h-3.5 w-16" />
+        <li key={index} className="flex items-center gap-4 py-[15px]">
+          <Skeleton className="hidden h-3 w-12 sm:block" />
+          <Skeleton className="h-3.5 w-3.5 rounded-sm" />
+          <Skeleton
+            className="h-3.5 flex-1"
+            style={{ maxWidth: `${[60, 45, 70, 52, 58][index % 5]}%` }}
+          />
+          <Skeleton className="ml-auto hidden h-3 w-24 sm:block" />
+          <Skeleton className="h-3 w-14" />
         </li>
       ))}
     </ul>

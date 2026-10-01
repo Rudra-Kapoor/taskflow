@@ -1,5 +1,3 @@
-import { AlertTriangle, HelpCircle } from 'lucide-react';
-import { cn } from '@/lib/cn';
 import { Button } from './Button';
 import { Modal } from './Modal';
 
@@ -21,7 +19,6 @@ export function ConfirmDialog({
   loading = false,
 }) {
   const isDanger = variant === 'danger';
-  const Icon = isDanger ? AlertTriangle : HelpCircle;
 
   return (
     <Modal
@@ -31,6 +28,7 @@ export function ConfirmDialog({
       dismissible={!loading}
       hideCloseButton
       ariaLabel={typeof title === 'string' ? title : 'Confirm action'}
+      bodyClassName="pb-6 pt-6"
       footer={
         <>
           <Button variant="secondary" onClick={onClose} disabled={loading}>
@@ -42,21 +40,13 @@ export function ConfirmDialog({
         </>
       }
     >
-      <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:items-start sm:text-left">
-        <span
-          className={cn(
-            'flex h-11 w-11 shrink-0 items-center justify-center rounded-full',
-            isDanger
-              ? 'bg-rose-100 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400'
-              : 'bg-brand-100 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300',
-          )}
-        >
-          <Icon className="h-5 w-5" aria-hidden="true" />
-        </span>
-        <div className="min-w-0 pt-0.5">
-          <h2 className="text-base font-semibold tracking-tight text-fg">{title}</h2>
-          {description && <div className="mt-1.5 text-sm text-fg-muted">{description}</div>}
-        </div>
+      <div className="min-w-0">
+        <h2 className="font-display text-[28px] font-normal leading-[1.1] tracking-[-0.005em] text-fg">
+          {title}
+        </h2>
+        {description && (
+          <div className="mt-2 text-sm leading-relaxed text-fg-muted">{description}</div>
+        )}
       </div>
     </Modal>
   );

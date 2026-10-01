@@ -3,49 +3,98 @@
 @tailwind utilities;
 
 /* -------------------------------------------------------------------------------------------------
- * Design tokens. Values are "R G B" triplets so Tailwind opacity modifiers work
- * (e.g. `bg-surface/80`). Light values live on :root, dark values on `.dark` (set on <html>).
+ * Design tokens ("Studio": warm paper, ink, one vermilion accent). Values are "R G B" triplets so
+ * Tailwind opacity modifiers work (e.g. `bg-surface/80`). Light values live on :root, dark values
+ * on `.dark` (set on <html>). See docs/DESIGN.md.
  * ---------------------------------------------------------------------------------------------- */
 @layer base {
   :root {
-    --color-canvas: 246 247 251;
+    --color-canvas: 245 243 238;
     --color-surface: 255 255 255;
-    --color-surface-muted: 241 243 248;
-    --color-surface-hover: 238 240 246;
-    --color-line: 227 230 239;
-    --color-line-strong: 193 199 213;
-    --color-fg: 15 23 42;
-    --color-fg-muted: 91 100 122;
-    --color-fg-subtle: 101 109 130;
+    --color-surface-muted: 238 235 228;
+    --color-surface-hover: 233 230 222;
+    --color-line: 226 222 212;
+    --color-line-strong: 207 202 190;
+    --color-fg: 25 24 20;
+    --color-fg-muted: 95 91 82;
+    --color-fg-subtle: 110 106 96;
+
+    /* Text-safe tones: >= 4.5:1 on canvas, surface and surface-muted. */
+    --color-danger: 180 35 24;
+    --color-warning: 127 90 0;
+    --color-caution: 168 70 14;
+    --color-success: 28 110 70;
+    --color-info: 36 87 197;
+
+    /* Barely-there paper grain for the canvas (light mode only). */
+    --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
     color-scheme: light;
   }
 
   .dark {
-    --color-canvas: 11 14 22;
-    --color-surface: 18 23 37;
-    --color-surface-muted: 23 29 44;
-    --color-surface-hover: 29 36 53;
-    --color-line: 36 44 63;
-    --color-line-strong: 58 68 93;
-    --color-fg: 230 233 242;
-    --color-fg-muted: 154 163 184;
-    --color-fg-subtle: 133 142 163;
+    --color-canvas: 15 15 14;
+    --color-surface: 23 23 21;
+    --color-surface-muted: 30 29 27;
+    --color-surface-hover: 37 36 33;
+    --color-line: 43 42 38;
+    --color-line-strong: 58 56 51;
+    --color-fg: 238 236 230;
+    --color-fg-muted: 167 163 153;
+    --color-fg-subtle: 142 138 128;
+
+    --color-danger: 242 132 111;
+    --color-warning: 221 182 74;
+    --color-caution: 238 150 88;
+    --color-success: 93 187 136;
+    --color-info: 127 163 242;
+
+    --paper-grain: none;
     color-scheme: dark;
   }
 
   html {
     @apply bg-canvas text-fg antialiased;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-optical-sizing: auto;
     text-rendering: optimizeLegibility;
     -webkit-tap-highlight-color: transparent;
   }
 
   body {
     @apply min-h-screen bg-canvas text-sm text-fg;
+    background-image: var(--paper-grain);
+  }
+
+  /* Figures line up in tables, timestamps and anything set in mono. */
+  table,
+  time,
+  kbd,
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Instrument Serif ships one weight: never fake-bold it. */
+  .font-display {
+    font-synthesis: none;
+    font-weight: 400;
+  }
+
+  /* Calmer line icons: default 2px lucide strokes drawn at 1.75 (explicit widths are kept). */
+  svg.lucide[stroke-width='2'] {
+    stroke-width: 1.75px;
   }
 
   ::selection {
-    @apply bg-brand-500/20;
+    @apply bg-brand-500/20 text-fg;
+  }
+
+  .dark ::selection {
+    @apply bg-brand-500/35;
+  }
+
+  /* Fallback keyboard focus for anything without its own focus style (zero specificity). */
+  :where(a, button, [role='button'], [tabindex], summary):focus-visible {
+    outline: 2px solid theme('colors.brand.500');
+    outline-offset: 2px;
   }
 
   /* Thin, theme-aware scrollbars everywhere. */
@@ -99,40 +148,53 @@
  * Reusable component classes.
  * ---------------------------------------------------------------------------------------------- */
 @layer components {
+  /* Flat surface: hairline border, no shadow. */
   .card {
-    @apply rounded-xl border border-line bg-surface shadow-sm;
+    @apply rounded-xl border border-line bg-surface;
+  }
+
+  /* Mono eyebrow above titles / section labels ("PROJECTS", "TODAY"). */
+  .eyebrow {
+    @apply font-mono text-[11px] font-normal uppercase leading-4 tracking-[0.08em] text-fg-muted;
+  }
+
+  /* Serif display headline (page titles). */
+  .title-display {
+    @apply font-display text-[34px] font-normal leading-[1.05] tracking-[-0.01em] text-fg sm:text-[40px];
+    font-synthesis: none;
   }
 
   .input-base {
-    @apply block w-full rounded-lg border border-line-strong bg-surface px-3 text-sm text-fg shadow-xs;
+    @apply block w-full rounded-md border border-line-strong bg-surface px-3 text-sm text-fg;
     @apply placeholder:text-fg-subtle;
     @apply transition-[border-color,box-shadow] duration-150;
-    @apply hover:border-fg-subtle/50;
-    @apply focus:border-brand-500 focus:outline-none focus:ring-[3px] focus:ring-brand-500/20;
+    @apply hover:border-fg-subtle/70;
+    @apply focus:border-fg focus:outline-none focus:ring-[3px] focus:ring-brand-500/20;
+    @apply dark:focus:border-fg-muted dark:focus:ring-brand-500/25;
     @apply disabled:cursor-not-allowed disabled:bg-surface-muted disabled:text-fg-muted;
     @apply disabled:hover:border-line-strong;
   }
 
   .input-error {
-    @apply border-rose-500 hover:border-rose-500 focus:border-rose-500 focus:ring-rose-500/20;
-    @apply dark:border-rose-500/80;
+    @apply border-danger hover:border-danger focus:border-danger focus:ring-danger/15;
+    @apply dark:border-danger/80 dark:focus:border-danger;
   }
 
   /* Native <select> with a custom chevron (no wrapper element needed), drawn in fg-subtle. */
   .select-chevron {
     appearance: none;
     padding-right: 2.25rem;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23656d82' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.75' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236e6a60' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='m6.5 8.25 3.5 3.5 3.5-3.5'/%3e%3c/svg%3e");
     background-position: right 0.625rem center;
     background-repeat: no-repeat;
     background-size: 1.125rem;
   }
 
   .dark .select-chevron {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23858ea3' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.75' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238e8a80' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.6' d='m6.5 8.25 3.5 3.5 3.5-3.5'/%3e%3c/svg%3e");
   }
 
-  /* Keyboard focus: solid brand ring, separated from the control by a gap in the surface colour. */
+  /* Keyboard focus: 2px vermilion ring, separated from the control by a gap in the surface colour. */
   .focus-ring {
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500;
     @apply focus-visible:ring-offset-2 focus-visible:ring-offset-surface;
@@ -156,21 +218,26 @@
     display: none;
   }
 
+  /* Legacy name: gradient text is retired; renders as plain ink. */
   .text-gradient {
-    @apply bg-gradient-to-r from-brand-600 via-violet-600 to-fuchsia-600 bg-clip-text text-transparent;
-    @apply dark:from-brand-400 dark:via-violet-400 dark:to-fuchsia-400;
+    @apply text-fg;
   }
 
-  /* Decorative dotted grid used on marketing-style surfaces (auth panel, 404). */
+  /* Faint dot grid for editorial surfaces (auth, 404): ink dots on paper. */
   .bg-dot-grid {
-    background-image: radial-gradient(rgb(255 255 255 / 0.18) 1px, transparent 1px);
+    background-image: radial-gradient(rgb(var(--color-fg) / 0.09) 1px, transparent 1px);
     background-size: 22px 22px;
   }
 
   .bg-dot-grid-muted {
-    background-image: radial-gradient(rgb(var(--color-fg-subtle) / 0.22) 1px, transparent 1px);
+    background-image: radial-gradient(rgb(var(--color-fg-subtle) / 0.2) 1px, transparent 1px);
     background-size: 24px 24px;
   }
+}
+
+/* Paper grain wherever the canvas colour is painted (light mode only; zero extra specificity). */
+:where(html:not(.dark)) .bg-canvas {
+  background-image: var(--paper-grain);
 }
 
 /* Disables transitions while the theme flips so every surface changes colour at once. */

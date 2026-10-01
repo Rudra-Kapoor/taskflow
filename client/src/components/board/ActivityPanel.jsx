@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { History, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { ActivityFeed } from '@/components/activity/ActivityFeed';
 import { IconButton } from '@/components/ui';
 import { useProjectActivity } from '@/hooks/queries/activity';
@@ -32,25 +32,26 @@ function PanelContent({ projectId, projectName, onClose }) {
       <div
         aria-hidden="true"
         onClick={onClose}
-        className="fixed inset-0 z-40 animate-fade-in bg-slate-950/40 backdrop-blur-[2px] lg:hidden"
+        className="fixed inset-0 z-40 animate-fade-in bg-black/30 lg:hidden dark:bg-black/50"
       />
       <div
         role="dialog"
         aria-modal="false"
         aria-labelledby="project-activity-title"
-        className="fixed inset-y-0 right-0 z-40 flex w-full animate-slide-in-right flex-col border-l border-line bg-surface shadow-2xl sm:w-[420px] lg:top-16 dark:shadow-black/50"
+        className="fixed inset-y-0 right-0 z-40 flex w-full animate-slide-in-right flex-col border-l border-line bg-surface shadow-xl sm:w-[420px] lg:top-14 dark:shadow-black/60"
       >
-        <div className="flex h-16 shrink-0 items-center gap-3 border-b border-line px-5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600 ring-1 ring-inset ring-brand-600/10 dark:bg-brand-500/10 dark:text-brand-300 dark:ring-brand-400/20">
-            <History className="h-[18px] w-[18px]" aria-hidden="true" />
-          </span>
+        <div className="flex shrink-0 items-start gap-3 border-b border-line px-6 pb-4 pt-5">
           <div className="min-w-0 flex-1">
-            <h2 id="project-activity-title" className="text-sm font-semibold text-fg">
+            <p className="flex min-w-0 items-center gap-2 font-mono text-[11px] uppercase tracking-[0.08em] text-fg-muted">
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-status-done" aria-hidden="true" />
+              <span className="truncate">Live · {projectName}</span>
+            </p>
+            <h2
+              id="project-activity-title"
+              className="mt-1.5 font-display text-[26px] font-normal leading-[1.1] tracking-[-0.01em] text-fg"
+            >
               Project activity
             </h2>
-            <p className="truncate text-xs text-fg-muted">
-              Live updates in <span className="font-medium">{projectName}</span>
-            </p>
           </div>
           <IconButton
             ref={closeButtonRef}
@@ -58,9 +59,10 @@ function PanelContent({ projectId, projectName, onClose }) {
             label="Close activity"
             size="sm"
             onClick={onClose}
+            className="-mr-2 touch:h-9 touch:w-9"
           />
         </div>
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-5">
           <ActivityFeed
             query={query}
             compact

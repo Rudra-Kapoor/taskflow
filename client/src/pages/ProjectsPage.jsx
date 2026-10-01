@@ -182,9 +182,10 @@ export function ProjectsPage() {
   return (
     <div className="mx-auto w-full max-w-7xl">
       <PageHeader
+        eyebrow="Workspace"
         icon={FolderKanban}
         title="Projects"
-        description="Browse and manage the projects of all your teams."
+        description="Every board across your teams, with its progress at a glance."
         actions={
           <Tooltip
             content={
@@ -205,54 +206,61 @@ export function ProjectsPage() {
         }
       />
 
-      <Tabs
-        aria-label="Project status"
-        className="mb-5"
-        value={status}
-        onChange={(value) => setParam('status', value, DEFAULT_STATUS)}
-        tabs={STATUS_TABS.map((tab) => ({
-          ...tab,
-          count: countsKnown ? counts[tab.value] : undefined,
-        }))}
-      />
-
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-        <SearchInput
-          value={searchInput}
-          onChange={setSearchInput}
-          placeholder="Search projects…"
-          aria-label="Search projects"
-          maxLength={SEARCH_MAX}
-          className="w-full sm:max-w-xs"
+      {/* From `sm` up the status tabs and the filters share one hairline. */}
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between sm:gap-6 sm:border-b sm:border-line">
+        <Tabs
+          aria-label="Project status"
+          className="sm:-mb-px sm:border-b-0"
+          value={status}
+          onChange={(value) => setParam('status', value, DEFAULT_STATUS)}
+          tabs={STATUS_TABS.map((tab) => ({
+            ...tab,
+            count: countsKnown ? counts[tab.value] : undefined,
+          }))}
         />
-        <Select
-          aria-label="Filter by team"
-          value={teamFilter}
-          onChange={(event) => setParam('team', event.target.value)}
-          className="sm:w-56"
-        >
-          <option value="">All teams</option>
-          {teams.map((team) => (
-            <option key={team._id} value={team._id}>
-              {team.name}
-            </option>
-          ))}
-        </Select>
-        {countsKnown && (
-          <p className="text-sm text-fg-muted sm:ml-auto" aria-live="polite">
-            {pluralize(visible.length, 'project')}
-            {isFiltered && (
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="focus-ring ml-3 rounded font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
-              >
-                Clear filters
-              </button>
-            )}
-          </p>
-        )}
+
+        <div className="flex flex-col gap-2 xs:flex-row sm:pb-2">
+          <SearchInput
+            value={searchInput}
+            onChange={setSearchInput}
+            placeholder="Search projects…"
+            aria-label="Search projects"
+            maxLength={SEARCH_MAX}
+            className="w-full xs:flex-1 sm:w-56 sm:flex-none lg:w-64"
+          />
+          <Select
+            aria-label="Filter by team"
+            value={teamFilter}
+            onChange={(event) => setParam('team', event.target.value)}
+            className="xs:w-44"
+          >
+            <option value="">All teams</option>
+            {teams.map((team) => (
+              <option key={team._id} value={team._id}>
+                {team.name}
+              </option>
+            ))}
+          </Select>
+        </div>
       </div>
+
+      {countsKnown && (
+        <p
+          className="eyebrow mb-3 flex min-h-5 items-center gap-3"
+          aria-live="polite"
+        >
+          {pluralize(visible.length, 'project')}
+          {isFiltered && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="focus-ring rounded-sm font-sans text-xs font-medium normal-case tracking-normal text-brand-600 underline-offset-2 hover:underline dark:text-brand-400"
+            >
+              Clear filters
+            </button>
+          )}
+        </p>
+      )}
 
       {content}
 

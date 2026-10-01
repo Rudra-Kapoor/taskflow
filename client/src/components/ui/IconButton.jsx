@@ -6,18 +6,18 @@ const VARIANTS = {
     'border-transparent text-fg-muted hover:bg-surface-hover hover:text-fg active:bg-surface-muted ' +
     'aria-expanded:bg-surface-hover aria-expanded:text-fg',
   secondary:
-    'border-line-strong bg-surface text-fg-muted shadow-xs hover:bg-surface-hover hover:text-fg ' +
-    'active:bg-surface-muted aria-expanded:bg-surface-hover aria-expanded:text-fg',
+    'border-line-strong bg-surface text-fg-muted hover:border-fg-subtle/50 hover:bg-surface-hover ' +
+    'hover:text-fg active:bg-surface-muted aria-expanded:bg-surface-hover aria-expanded:text-fg',
   danger:
-    'border-transparent text-fg-muted hover:bg-rose-50 hover:text-rose-600 active:bg-rose-100 ' +
-    'dark:hover:bg-rose-500/10 dark:hover:text-rose-400 dark:active:bg-rose-500/15',
+    'border-transparent text-fg-muted hover:bg-danger/[0.08] hover:text-danger ' +
+    'active:bg-danger/[0.12]',
 };
 
 const SIZES = {
   xs: { box: 'h-7 w-7 rounded-md', icon: 'h-3.5 w-3.5' },
-  sm: { box: 'h-8 w-8 rounded-lg', icon: 'h-4 w-4' },
-  md: { box: 'h-9 w-9 rounded-lg', icon: 'h-[18px] w-[18px]' },
-  lg: { box: 'h-10 w-10 rounded-lg', icon: 'h-5 w-5' },
+  sm: { box: 'h-8 w-8 rounded-md', icon: 'h-4 w-4' },
+  md: { box: 'h-9 w-9 rounded-md', icon: 'h-[18px] w-[18px]' },
+  lg: { box: 'h-10 w-10 rounded-md', icon: 'h-5 w-5' },
 };
 
 /**

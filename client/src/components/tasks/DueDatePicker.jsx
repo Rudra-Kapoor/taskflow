@@ -146,7 +146,9 @@ export function DueDatePicker({
                 aria-pressed={active}
                 title={format(date, 'EEEE, MMM d')}
                 className={cn(
-                  'focus-ring inline-flex h-6 items-center rounded-md px-1.5 text-xs font-medium ring-1 ring-inset transition-colors touch:h-9 touch:px-2.5',
+                  'focus-ring inline-flex h-6 items-center rounded px-1.5 text-xs transition-colors touch:h-9 touch:px-2.5',
+                  // Ghost (task panel): quiet text buttons; field (form): hairline outlined.
+                  !ghost && 'ring-1 ring-inset',
                   active
                     ? 'bg-brand-50 text-brand-700 ring-brand-300 dark:bg-brand-500/15 dark:text-brand-200 dark:ring-brand-400/40'
                     : 'text-fg-muted ring-line hover:bg-surface-hover hover:text-fg',

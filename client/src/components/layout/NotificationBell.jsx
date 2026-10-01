@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { ArrowRight, Bell, BellRing, CheckCheck } from 'lucide-react';
+import { ArrowRight, Bell, BellRing } from 'lucide-react';
 import { getErrorMessage } from '@/api/client';
 import { NotificationItem } from '@/components/notifications/NotificationItem';
-import { Badge, EmptyState, ErrorState, IconButton, Popover, Skeleton } from '@/components/ui';
+import { EmptyState, ErrorState, IconButton, Popover, Skeleton } from '@/components/ui';
 import {
   NOTIFICATION_PREVIEW_PARAMS,
   useMarkAllNotificationsRead,
@@ -12,7 +12,6 @@ import {
   useNotifications,
   useUnreadCount,
 } from '@/hooks/queries/notifications';
-import { formatBadgeCount } from '@/lib/format';
 import { getNotificationLink } from '@/lib/notifications';
 
 /** Bell button with unread badge; opens a panel with the latest notifications. */
@@ -32,13 +31,12 @@ export function NotificationBell() {
         onClick={() => setOpen((current) => !current)}
       >
         {unreadCount > 0 && (
+          // A quiet vermilion dot (the count is in the label, the panel and the sidebar).
           <span
             key={unreadCount}
             aria-hidden="true"
-            className="absolute -right-0.5 -top-0.5 flex h-[18px] min-w-[18px] animate-scale-in items-center justify-center rounded-full bg-rose-600 px-1 text-2xs font-semibold leading-none text-white ring-2 ring-surface"
-          >
-            {formatBadgeCount(unreadCount)}
-          </span>
+            className="absolute right-[8px] top-[8px] h-[7px] w-[7px] animate-scale-in rounded-full bg-brand-500 ring-2 ring-canvas"
+          />
         )}
       </IconButton>
 
@@ -48,7 +46,7 @@ export function NotificationBell() {
         anchorRef={anchorRef}
         align="end"
         aria-label="Notifications"
-        className="w-[380px] max-w-[calc(100vw-1rem)] overflow-hidden"
+        className="w-[400px] max-w-[calc(100vw-1rem)] overflow-hidden"
       >
         <NotificationPanel onClose={() => setOpen(false)} />
       </Popover>
@@ -85,57 +83,66 @@ function NotificationPanel({ onClose }) {
 
   return (
     <div className="flex max-h-[min(36rem,calc(100vh-6rem))] flex-col">
-      <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-3">
-        <div className="flex items-center gap-2">
-          <h2 className="text-sm font-semibold text-fg">Notifications</h2>
+      <div className="flex h-12 shrink-0 items-center justify-between gap-3 border-b border-line pl-4 pr-3">
+        <div className="flex min-w-0 items-baseline gap-2.5">
+          <h2 className="text-[15px] font-semibold tracking-[-0.005em] text-fg">Notifications</h2>
           {unreadCount > 0 && (
-            <Badge color="brand" size="sm">
+            <span className="font-mono text-[11px] tabular-nums text-brand-700 dark:text-brand-400">
               {unreadCount} new
-            </Badge>
+            </span>
           )}
         </div>
         <button
           type="button"
           onClick={handleMarkAll}
           disabled={unreadCount === 0 || markAllRead.isPending}
-          className="focus-ring inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-xs font-medium text-brand-600 transition-colors hover:bg-brand-50 hover:text-brand-700 disabled:pointer-events-none disabled:text-fg-subtle dark:text-brand-400 dark:hover:bg-brand-500/10 dark:hover:text-brand-300"
+          className="focus-ring shrink-0 rounded-sm px-1 py-0.5 text-xs font-medium text-fg-muted underline decoration-line-strong underline-offset-[3px] transition-colors hover:text-fg hover:decoration-fg disabled:pointer-events-none disabled:text-fg-subtle disabled:no-underline"
         >
-          <CheckCheck className="h-3.5 w-3.5" aria-hidden="true" />
           Mark all read
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-1.5">
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
         {isLoading ? (
-          <ul className="space-y-1" aria-label="Loading notifications">
+          <ul className="divide-y divide-line" aria-label="Loading notifications">
             {Array.from({ length: 4 }, (_, index) => (
-              <li key={index} className="flex gap-3 px-2.5 py-2.5">
-                <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
+              <li key={index} className="flex gap-3 py-3 pl-7 pr-4">
+                <Skeleton className="h-6 w-6 shrink-0 rounded-full" />
                 <div className="flex-1 space-y-2 pt-0.5">
-                  <Skeleton className="h-3.5 w-full" />
-                  <Skeleton className="h-3.5 w-2/3" />
-                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-3 w-full" />
+                  <Skeleton className="h-3 w-2/3" />
+                  <Skeleton className="h-2.5 w-20" />
                 </div>
               </li>
             ))}
           </ul>
         ) : isError ? (
-          <ErrorState compact title="Couldn't load notifications" error={error} onRetry={refetch} />
+          <div className="p-2">
+            <ErrorState
+              compact
+              title="Couldn't load notifications"
+              error={error}
+              onRetry={refetch}
+            />
+          </div>
         ) : items.length === 0 ? (
-          <EmptyState
-            compact
-            icon={BellRing}
-            title="You're all caught up"
-            description="We'll let you know when someone assigns, moves or comments on your tasks."
-          />
+          <div className="p-2">
+            <EmptyState
+              compact
+              icon={BellRing}
+              title="You're all caught up"
+              description="We'll let you know when someone assigns, moves or comments on your tasks."
+            />
+          </div>
         ) : (
-          <ul className="space-y-0.5">
+          <ul className="divide-y divide-line">
             {items.map((notification) => (
               <li key={notification._id}>
                 <NotificationItem
                   notification={notification}
                   onClick={() => handleOpen(notification)}
                   compact
+                  className="rounded-none"
                 />
               </li>
             ))}
@@ -143,19 +150,18 @@ function NotificationPanel({ onClose }) {
         )}
       </div>
 
-      <div className="border-t border-line p-1.5">
-        <Link
-          to="/notifications"
-          onClick={onClose}
-          className="focus-ring group flex h-9 items-center justify-center gap-1.5 rounded-lg text-sm font-medium text-fg-muted transition-colors hover:bg-surface-hover hover:text-fg"
-        >
-          View all notifications
-          <ArrowRight
-            className="h-4 w-4 transition-transform group-hover:translate-x-0.5"
-            aria-hidden="true"
-          />
-        </Link>
-      </div>
+      <Link
+        to="/notifications"
+        onClick={onClose}
+        className="group flex h-11 shrink-0 items-center justify-between border-t border-line px-4 text-[13px] font-medium text-fg outline-none transition-colors hover:bg-surface-muted/60 focus-visible:bg-surface-muted/60 focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-500"
+      >
+        View all notifications
+        <ArrowRight
+          className="h-4 w-4 text-fg-subtle transition-[color,transform] group-hover:translate-x-0.5 group-hover:text-fg"
+          strokeWidth={1.75}
+          aria-hidden="true"
+        />
+      </Link>
     </div>
   );
 }

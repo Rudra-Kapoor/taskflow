@@ -20,18 +20,23 @@ export function UserMenu() {
         <button
           type="button"
           aria-label={`Account menu for ${user.name}`}
-          className="focus-ring rounded-full transition-shadow hover:ring-4 hover:ring-surface-hover aria-expanded:ring-4 aria-expanded:ring-brand-500/20"
+          className="focus-ring inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-surface-hover aria-expanded:bg-surface-hover"
         >
-          <Avatar user={user} size="md" decorative />
+          <Avatar user={user} size="sm" decorative />
         </button>
       }
     >
       {/* Not a menu item: plain context for the entries below. */}
-      <div role="presentation" className="flex items-center gap-3 px-2.5 pb-2.5 pt-2">
-        <Avatar user={user} size="lg" decorative />
-        <div className="min-w-0">
-          <div className="truncate text-sm font-semibold text-fg">{user.name}</div>
-          <div className="truncate text-xs text-fg-muted">{user.email}</div>
+      <div role="presentation" className="px-2.5 pb-2.5 pt-2">
+        <div className="font-mono text-[11px] uppercase tracking-[0.08em] text-fg-subtle">
+          Signed in as
+        </div>
+        <div className="mt-2 flex items-center gap-2.5">
+          <Avatar user={user} size="md" decorative />
+          <div className="min-w-0 leading-tight">
+            <div className="truncate text-sm font-medium text-fg">{user.name}</div>
+            <div className="mt-0.5 truncate text-xs text-fg-muted">{user.email}</div>
+          </div>
         </div>
       </div>
       <DropdownSeparator />

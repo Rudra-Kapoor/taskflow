@@ -8,7 +8,7 @@ import { useDocumentTitle } from '@/hooks/pages/useDocumentTitle';
 import { useTeams } from '@/hooks/queries/teams';
 
 /** `grid-cols-1` (minmax(0, 1fr)) keeps long team names from stretching cards past the screen. */
-const GRID = 'grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3';
+const GRID = 'grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3';
 
 /** Every team the user belongs to; new teams open on their page so members can be added. */
 export function TeamsPage() {
@@ -60,6 +60,7 @@ export function TeamsPage() {
   return (
     <div className="mx-auto w-full max-w-7xl">
       <PageHeader
+        eyebrow="Workspace"
         icon={Users}
         title="Teams"
         description="The teams you belong to and the people in them."

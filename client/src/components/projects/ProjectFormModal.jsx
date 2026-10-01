@@ -257,7 +257,8 @@ function ProjectFormDialog({ onClose, project, defaultTeamId, onSaved }) {
         <form id={formId} onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
           {formError && <Alert variant="error">{formError}</Alert>}
 
-          <div className="flex items-center gap-3 rounded-xl border border-line bg-surface-muted/60 p-3">
+          {/* Live preview of the project's identity: key, colour, name and team. */}
+          <div className="flex items-center gap-3 rounded-lg border border-line bg-surface-muted/50 p-3">
             <ProjectTile projectKey={key || '?'} color={color} />
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-fg">
@@ -284,7 +285,14 @@ function ProjectFormDialog({ onClose, project, defaultTeamId, onSaved }) {
               label="Key"
               error={errors.key?.message}
               hint={
-                isEdit ? 'Renames every task ID.' : `Task IDs: ${key || 'KEY'}-1, ${key || 'KEY'}-2`
+                isEdit ? (
+                  'Renames every task ID.'
+                ) : (
+                  <>
+                    Task IDs: <span className="font-mono">{key || 'KEY'}-1</span>,{' '}
+                    <span className="font-mono">{key || 'KEY'}-2</span>
+                  </>
+                )
               }
               required
             >
@@ -325,7 +333,7 @@ function ProjectFormDialog({ onClose, project, defaultTeamId, onSaved }) {
             label="Description"
             error={errors.description?.message}
             action={
-              <span className="text-xs tabular-nums text-fg-muted">
+              <span className="font-mono text-[11px] tabular-nums text-fg-muted">
                 {description.length}/{DESCRIPTION_MAX}
               </span>
             }

@@ -3,7 +3,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
-import { Crown } from 'lucide-react';
 import { applyFieldErrors, getErrorMessage } from '@/api/client';
 import { Alert, Button, FormField, Input, Modal, Textarea } from '@/components/ui';
 import { useCreateTeam, useUpdateTeam } from '@/hooks/queries/teams';
@@ -101,12 +100,12 @@ function TeamFormDialog({ onClose, team, onSaved }) {
       <form id={formId} onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
         {formError && <Alert variant="error">{formError}</Alert>}
 
-        <div className="flex items-center gap-3 rounded-xl border border-line bg-surface-muted/60 p-3">
-          {/* A new team's colour comes from its id, so the preview uses the brand gradient. */}
+        <div className="flex items-center gap-3 rounded-lg border border-line bg-surface-muted/50 p-3">
+          {/* A new team's colour comes from its id (not known yet): preview it in neutral ink. */}
           <TeamAvatar
             team={{ _id: team?._id, name: name.trim() || 'New team' }}
             size="md"
-            className={isEdit ? undefined : 'bg-gradient-to-br from-brand-500 to-violet-600'}
+            tone={isEdit ? 'hue' : 'ink'}
           />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-fg">{name.trim() || 'New team'}</p>
@@ -114,9 +113,6 @@ function TeamFormDialog({ onClose, team, onSaved }) {
               {isEdit ? 'Team preview' : 'You’ll be the owner and can invite members next.'}
             </p>
           </div>
-          {!isEdit && (
-            <Crown className="ml-auto h-4 w-4 shrink-0 text-violet-500" aria-hidden="true" />
-          )}
         </div>
 
         <FormField label="Team name" error={errors.name?.message} required>
@@ -134,7 +130,7 @@ function TeamFormDialog({ onClose, team, onSaved }) {
           error={errors.description?.message}
           hint="Optional. What does this team work on?"
           action={
-            <span className="text-xs tabular-nums text-fg-muted">
+            <span className="font-mono text-[11px] tabular-nums text-fg-muted">
               {description.length}/{DESCRIPTION_MAX}
             </span>
           }
